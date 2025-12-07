@@ -35,7 +35,7 @@ const updateServers = async () => {
         }
     } finally {
         if (isPageActivated) {
-            timer = setTimeout(updateServers, 30000);
+            timer = setTimeout(updateServers, 20000);
         }
     }
 }

@@ -6,7 +6,7 @@ const { user, userLogout } = useAuth()
 const links = [
     { label: '服务器状态', icon: 'i-heroicons-server', to: '/' },
     { label: '聊天', icon: 'i-heroicons-chat-bubble-left-right', to: '/chat' },
-    { label: '玩家设置', icon: 'i-heroicons-user-circle', to: '/settings/player' },
+    { label: '玩家设置', icon: 'i-heroicons-user-circle', to: '/player' },
 ]
 
 useHead({
@@ -73,8 +73,8 @@ useHead({
                                     src: `https://avatars.cloudhaven.gg/avatars/${user?.uuid || '853c80ef3c3749fdaa49938b674adae6'}`
                                 }" size="sm" />
                                 <USeparator class="mt-2 mb-1" />
-                                <UButton to="/settings/player" variant="ghost" color="neutral" icon="i-heroicons-user"
-                                    block class="justify-start mb-1">玩家设置</UButton>
+                                <UButton to="/player" variant="ghost" color="neutral" icon="i-heroicons-user" block
+                                    class="justify-start mb-1">玩家设置</UButton>
                                 <!-- red -> error -->
                                 <UButton variant="ghost" color="error" icon="i-heroicons-arrow-right-on-rectangle" block
                                     class="justify-start" @click="userLogout">退出登录
