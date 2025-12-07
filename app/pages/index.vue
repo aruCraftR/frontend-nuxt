@@ -1,55 +1,95 @@
 <!-- pages/index.vue -->
 <script setup lang="ts">
-definePageMeta({ title: '服务器状态 占位页面' })
+import type { ApiResponse, ServerInfo } from '~/types/api';
 
-// 模拟数据，实际开发中替换为 useApi 请求
-const servers = ref([
-    { id: 1, name: 'Survival S1', status: 'online', players: 12, max: 50, ping: 24 },
-    { id: 2, name: 'Creative C1', status: 'maintenance', players: 0, max: 100, ping: -1 },
-    { id: 3, name: 'Lobby', status: 'online', players: 45, max: 200, ping: 18 }
-])
+definePageMeta({ title: '服务器列表' })
 
-const getStatusColor = (status: string) => {
-    if (status === 'online') return 'success'
-    if (status === 'maintenance') return 'warning'
-    return 'error'
+const { servers, lastFetchServerListTimestamp } = useUi()
+type Colors = "neutral" | "primary" | "secondary" | "success" | "info" | "warning" | "error"
+const statusColors: Map<string, Colors> = new Map([
+    ['active', 'success'],
+    ['starting', 'neutral'],
+    ['stopping', 'warning'],
+    ['stopped', 'error'],
+    ['unresponsive', 'warning']]
+)
+const statusText: Map<string, string> = new Map([
+    ['active', '运行中'],
+    ['starting', '启动中'],
+    ['stopping', '关闭中'],
+    ['stopped', '已关闭'],
+    ['unresponsive', '无响应']]
+)
+let isPageActivated = false;
+let timer: number;
+
+const updateServers = async () => {
+    if (!isPageActivated) return
+    const now = Date.now()
+    if (now - lastFetchServerListTimestamp.value <= 5) return
+    lastFetchServerListTimestamp.value = now
+    try {
+        const response: ApiResponse<ServerInfo[]> = await useApi('get', '/server/list')
+        if (response.data !== null) {
+            servers.value = response.data
+        }
+    } finally {
+        if (isPageActivated) {
+            timer = setTimeout(updateServers, 30000);
+        }
+    }
 }
+
+onMounted(() => {
+    isPageActivated = true
+    updateServers()
+})
+
+onUnmounted(() => {
+    isPageActivated = false
+    clearTimeout(timer)
+})
+
 </script>
 
 <template>
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         <UCard v-for="server in servers" :key="server.id" class="hover:shadow-lg transition-shadow duration-300 p-0">
-            <div class="relative h-32 bg-gray-200 dark:bg-gray-800">
-                <!-- 可以在这里放服务器封面图 -->
-                <div class="absolute inset-0 flex items-center justify-center text-gray-400">
-                    <UIcon name="i-heroicons-photo" class="w-12 h-12" />
-                </div>
-                <div class="absolute top-4 right-4">
-                    <UBadge :color="getStatusColor(server.status)" variant="solid">
-                        {{ server.status.toUpperCase() }}
-                    </UBadge>
-                </div>
-            </div>
 
             <div class="p-4">
-                <h3 class="text-lg font-bold mb-2">{{ server.name }}</h3>
+                <UPopover arrow mode="click" :open-delay=300>
+                    <div class="flex cursor-pointer">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold mb-2">{{ server.id }}</h3>
 
-                <div class="flex justify-between items-center text-sm text-gray-500 mb-4">
-                    <div class="flex items-center gap-1">
-                        <UIcon name="i-heroicons-users" />
-                        <span>{{ server.players }} / {{ server.max }}</span>
+                            <div class="flex justify-between items-center text-sm text-gray-500 mb-4">
+                                <div class="flex items-center gap-1">
+                                    <UIcon name="i-heroicons-users" />
+                                    <span>{{ server.player_count }} / {{ server.max_players }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <UBadge class="h-min" :color="statusColors.get(server.status) || 'neutral'" variant="solid">
+                            {{ statusText.get(server.status) || '状态未知' }}
+                        </UBadge>
                     </div>
-                    <div class="flex items-center gap-1" v-if="server.ping > 0">
-                        <UIcon name="i-heroicons-signal" />
-                        <span>{{ server.ping }}ms</span>
-                    </div>
-                </div>
+                    <template #content>
+                        <div v-if="server.players.length > 0" class="space-y-2 p-3 grid grid-cols-2">
+                            <UUser v-for="player in server.players" :key="player.player_id" :name="player?.player_id"
+                                :avatar="{
+                                    src: `https://avatars.cloudhaven.gg/avatars/${player?.uuid || '853c80ef3c3749fdaa49938b674adae6'}`
+                                }" alt="Avatar" size="sm" />
+                        </div>
+                        <div v-else class="p-3">
+                            没有玩家呢
+                        </div>
+                    </template>
+                </UPopover>
 
-                <UProgress :value="(server.players / server.max) * 100" size="xs"
-                    :color="getStatusColor(server.status)" />
+                <UProgress size="xs" :color="statusColors.get(server.status) || 'neutral'" />
 
                 <div class="mt-4 flex gap-2">
-                    <UButton block variant="soft" :disabled="server.status !== 'online'">进入终端</UButton>
+                    <UButton block variant="soft" :disabled="server.status !== 'active'">进入聊天</UButton>
                 </div>
             </div>
         </UCard>

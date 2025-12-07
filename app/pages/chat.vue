@@ -4,7 +4,7 @@ definePageMeta({ title: '服务器聊天 占位页面' })
 
 const message = ref('')
 const messages = ref([
-    { id: 1, user: 'System', text: 'Welcome to aruCraftR chat!', time: '10:00', type: 'system' },
+    { id: 1, user: 'System', text: '还没有写, 现在是占位页面', time: '10:00', type: 'system' },
     { id: 2, user: 'Alex', text: 'Hello everyone!', time: '10:01', type: 'user' },
     { id: 3, user: 'Steve', text: 'Anyone wanna trade?', time: '10:05', type: 'user' }
 ])

@@ -6,7 +6,7 @@ useHead({
 </script>
 
 <template>
-    <div class="min-h-screen">
+    <div class="h-[calc(100vh-var(--ui-header-height))]">
         <slot />
     </div>
 </template>

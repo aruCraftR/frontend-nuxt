@@ -38,24 +38,20 @@ const saveProfile = async () => {
             <template #header>
                 <h2 class="text-lg font-semibold">个人资料</h2>
             </template>
-            <div class="space-y-4">
-                <div class="flex">
-                    <UFormField label="游戏ID" class="inline-block">
-                        <UInput :model-value="user?.player_id" disabled />
-                    </UFormField>
-                    <UFormField label="UUID" class="inline-block ml-5 flex-1">
-                        <UInput :model-value="user?.uuid" class="w-full max-w-75" disabled />
-                    </UFormField>
-                </div>
-
-                <UFormField label="绑定QQ">
-                    <UInput :model-value="user?.qq_id" disabled />
-                </UFormField>
+            <div class="space-y-6">
+                <UUser :name="user?.player_id" :description="user?.uuid" :avatar="{
+                    src: `https://avatars.cloudhaven.gg/avatars/${user?.uuid || '853c80ef3c3749fdaa49938b674adae6'}`
+                }" size="3xl" />
 
                 <UForm :schema="formSchema" :state="formState" class="space-y-4">
-                    <UFormField label="更改密码">
-                        <UInput v-model="formState.password" placeholder="若不需要更改密码则留空" type="password" />
-                    </UFormField>
+                    <div class="flex space-x-6">
+                        <UFormField label="绑定QQ">
+                            <UInput :model-value="user?.qq_id" disabled />
+                        </UFormField>
+                        <UFormField label="更改密码">
+                            <UInput v-model="formState.password" placeholder="若不需要更改密码可留空" type="password" />
+                        </UFormField>
+                    </div>
 
                     <div class="flex justify-end">
                         <UButton :disabled="loading" @click="saveProfile">保存更改</UButton>

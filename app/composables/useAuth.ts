@@ -1,4 +1,4 @@
-import type { LoginResponse, UserInfo } from '~/types/api'
+import type { LoginResponse, AuthedPlayerInfo } from '~/types/api'
 
 /**
  * 用户认证与授权逻辑
@@ -10,7 +10,7 @@ export const useAuth = () => {
     })
 
     // 2. User Info: 使用 useState 在应用内共享状态
-    const user = useCookie<UserInfo | null>('auth_user', {
+    const user = useCookie<AuthedPlayerInfo | null>('auth_user', {
         maxAge: 60 * 60 * 24 + 3600 // 25小时
     })
 

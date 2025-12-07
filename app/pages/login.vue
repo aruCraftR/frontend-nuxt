@@ -83,7 +83,8 @@ const items = [
 </script>
 
 <template>
-    <UContainer class="relative min-h-screen min-w-screen flex items-center justify-center overflow-hidden">
+    <UContainer
+        class="relative flex items-center justify-center overflow-hidden min-h-[calc(100vh-var(--ui-header-height))]">
         <UCard class="box-border min-w-100 w-1/4 bg-accented">
             <template #header>
                 aruCraftR玩家面板
@@ -145,7 +146,7 @@ const items = [
                     <UModal title="忘记密码怎么办" close>
                         <UButton variant="link">忘记密码</UButton>
                         <template #body>
-                            若忘记密码, 可使用验证码登录, 随后前往玩家设置更改密码
+                            可使用验证码登录, 随后前往玩家设置更改密码
                         </template>
                     </UModal>
                 </UContainer>

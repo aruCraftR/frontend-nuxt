@@ -17,7 +17,7 @@ useHead({
 
 <template>
     <div
-        class="relative flex h-screen w-full overflow-hidden text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-950">
+        class="relative flex w-full overflow-hidden text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-950 h-[calc(100vh-var(--ui-header-height))]">
         <aside class="z-20 flex flex-col border-r border-gray-200 dark:border-gray-800 transition-all duration-500">
             <!-- Logo -->
             <UContainer
@@ -57,22 +57,22 @@ useHead({
             <header
                 class="h-16 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-30">
                 <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
-                    <UIcon name="i-heroicons-home" class="text-gray-400" v-if="route.path === '/'" />
+                    <UIcon v-if="route.path === '/'" name="i-heroicons-server" class="text-gray-400" />
                     {{ route.meta.title || 'Player Panel' }}
                 </h1>
 
                 <div class="flex items-center gap-4">
-                    <UPopover mode="hover">
+                    <UPopover mode="click" arrow>
                         <UAvatar
                             :src="`https://avatars.cloudhaven.gg/avatars/${user?.uuid || '853c80ef3c3749fdaa49938b674adae6'}`"
                             alt="Avatar" size="sm"
                             class="rounded-xs cursor-pointer ring-2 ring-primary-500 ring-offset-2 dark:ring-offset-gray-900" />
                         <template #content>
                             <div class="p-2 w-48">
-                                <div
-                                    class="px-2 py-2 text-sm text-gray-500 border-b border-gray-200 dark:border-gray-700 mb-2">
-                                    {{ user?.player_id || 'Player' }}
-                                </div>
+                                <UUser class="ml-1" :name="user?.player_id" :description="user?.qq_id" :avatar="{
+                                    src: `https://avatars.cloudhaven.gg/avatars/${user?.uuid || '853c80ef3c3749fdaa49938b674adae6'}`
+                                }" size="sm" />
+                                <USeparator class="mt-2 mb-1" />
                                 <UButton to="/settings/player" variant="ghost" color="neutral" icon="i-heroicons-user"
                                     block class="justify-start mb-1">玩家设置</UButton>
                                 <!-- red -> error -->
