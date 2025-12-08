@@ -24,12 +24,9 @@ export const useApi = <T>(method: Method, url: string, body?: Record<string, any
         headers: headers,
         ...options,
 
-
-        // 响应拦截
         onResponse({ response }) {
             const resData = response._data as ApiResponse<T>
 
-            // 业务逻辑错误处理
             if (resData && resData.code !== 200) {
                 switch (resData.code) {
                     case 401:
@@ -45,18 +42,21 @@ export const useApi = <T>(method: Method, url: string, body?: Record<string, any
             }
         },
 
-        // 网络层错误处理
+        onRequestError({ error }) {
+            toast.add({ title: '网络错误', description: `${error.name}: ${error.message}`, color: 'error' });
+        },
+
         onResponseError({ response }) {
             switch (response.status) {
                 case 401:
-                    toast.add({ title: '网络错误', description: '会话失效, 请重新登录', color: 'error' });
+                    toast.add({ title: 'API错误', description: '会话失效, 请重新登录', color: 'error' });
                     logout()
                     break;
                 case 404:
-                    toast.add({ title: '网络错误', description: '请求的API不存在', color: 'error' });
+                    toast.add({ title: 'API错误', description: '请求的API不存在', color: 'error' });
                     break;
                 default:
-                    toast.add({ title: '网络错误', description: `Status: ${response.status}`, color: 'error' })
+                    toast.add({ title: 'API错误', description: `Status: ${response.status}`, color: 'error' })
             }
         }
     })

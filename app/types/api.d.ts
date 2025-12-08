@@ -30,3 +30,9 @@ export interface ServerInfo {
     player_count: number
     players: BasePlayerInfo[]
 }
+
+
+export interface PlayerProfile {
+    online_qq_suffix: string;
+    offline_qq_suffix: string;
+}
