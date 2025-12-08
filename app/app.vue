@@ -6,23 +6,9 @@ useHead({
 
 <template>
   <UApp :toaster='{ position: "top-center" }' class="max-h-screen">
-    <UMain>
-      <NuxtLayout>
-        <NuxtPage />
-      </NuxtLayout>
-    </UMain>
-    <UFooter>
-      <template #left>
-        <p class="text-muted text-sm">
-          Copyright © {{ new Date().getFullYear() }} aruCraftR
-        </p>
-      </template>
-
-      <template #right>
-        <UButton icon="i-simple-icons-qq" color="neutral" variant="ghost" to="https://re.arucraftr.org" target="_blank"
-          aria-label="QQ" />
-      </template>
-    </UFooter>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
   </UApp>
 </template>
 
