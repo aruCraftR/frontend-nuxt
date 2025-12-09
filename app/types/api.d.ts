@@ -12,13 +12,14 @@ export interface LoginResponse {
     user: AuthedPlayerInfo;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface AuthedPlayerInfo extends BasePlayerInfo {
-    qq_id: string;
 }
 
 export interface BasePlayerInfo {
     player_id: string;
     uuid: string;
+    qq_id: string;
 }
 
 type ServerStatus = 'active' | 'starting' | 'stopping' | 'stopped' | 'unresponsive'

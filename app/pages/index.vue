@@ -83,8 +83,9 @@ onUnmounted(() => {
                             <div v-if="server.players.length > 0" class="p-3 grid grid-cols-2 gap-2">
                                 <UUser v-for="player in server.players" :key="player.player_id"
                                     :name="player?.player_id" :avatar="{
-                                        src: `https://avatars.cloudhaven.gg/avatars/${player?.uuid || '853c80ef3c3749fdaa49938b674adae6'}`
+                                        src: `http://q1.qlogo.cn/g?b=qq&s=160&nk=${player.qq_id || 0}`
                                     }" alt="Avatar" size="sm" />
+                                <!-- MC头像: `https://avatars.cloudhaven.gg/avatars/${player?.uuid || '853c80ef3c3749fdaa49938b674adae6'}` -->
                             </div>
                             <div v-else class="p-3">
                                 没有玩家呢
