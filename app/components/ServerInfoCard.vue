@@ -87,21 +87,35 @@ const getCardMenuItems = (serverInfo: ServerInfo, serverProfile: ServerProfile):
         <UCard class="hover:shadow-lg transition-shadow duration-300 p-0">
             <div class="p-4">
                 <UPopover arrow mode="click">
-                    <div class="flex cursor-pointer">
-                        <div class="flex-1">
-                            <h3 class="text-lg font-bold mb-2">{{ serverProfile.zh_cn_name || serverProfile.en_ww_name
-                                }}</h3>
-
-                            <div class="flex justify-between items-center text-sm text-gray-500 mb-4">
-                                <div class="flex items-center gap-1">
-                                    <UIcon name="i-heroicons-users" />
-                                    <span>{{ serverInfo.player_count }} / {{ serverInfo.max_players }}</span>
+                    <div class="flex cursor-pointer flex-col">
+                        <div class="flex flex-row">
+                            <div class="flex flex-1 gap-2 mb-2">
+                                <h3 class="text-lg font-bold">
+                                    {{ serverProfile.zh_cn_name || serverProfile.en_ww_name }}
+                                </h3>
+                                <span v-if="serverProfile.server_version" class="text-sm text-gray-500 self-end mb-0.5">
+                                    v{{ serverProfile.server_version }}
+                                </span>
+                            </div>
+                            <UBadge class="h-min" :color="statusColors.get(serverInfo.status) || 'neutral'"
+                                variant="solid">
+                                {{ statusText.get(serverInfo.status) || '状态未知' }}
+                            </UBadge>
+                        </div>
+                        <div class="flex justify-between items-center text-sm text-gray-500 mb-4 space-x-2">
+                            <div class="flex items-center gap-1 flex-1">
+                                <UIcon name="i-heroicons-users" />
+                                <span>{{ serverInfo.player_count }} / {{ serverInfo.max_players }}</span>
+                                <div>
+                                    <UAvatarGroup size="2xs" :max="3" class="ml-1">
+                                        <UAvatar v-for="player in serverInfo.players" :key="player.player_id"
+                                            :alt="player?.player_id"
+                                            :src="`https://q1.qlogo.cn/g?b=qq&nk=${player.qq_id || 0}&s=140`" />
+                                    </UAvatarGroup>
                                 </div>
                             </div>
+                            <span v-if="serverProfile.mc_version">MC {{ serverProfile.mc_version }}</span>
                         </div>
-                        <UBadge class="h-min" :color="statusColors.get(serverInfo.status) || 'neutral'" variant="solid">
-                            {{ statusText.get(serverInfo.status) || '状态未知' }}
-                        </UBadge>
                     </div>
                     <template #content>
                         <div v-if="serverInfo.players.length > 0" class="p-3 grid grid-cols-2 gap-2">
