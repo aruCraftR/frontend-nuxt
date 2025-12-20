@@ -56,8 +56,7 @@ const createServerProfile = async () => {
     <div v-else-if="serverList.length > 0" class="space-y-5">
         <UBanner title="点击对应卡片可查看玩家列表" icon="i-lucide-info" class="rounded-xl" color="primary" />
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-            <ServerInfoCard v-for="server in serverList" :key="server.id" :server-info="server"
-                :server-profile="serverProfiles[server.id]!" />
+            <ServerInfoCard v-for="server in serverList" :key="server.id" :server-info="server" />
             <UCard v-if="user && user.permission >= 5" class="hover:scale-105 transition-scale duration-200 p-0"
                 @click="createServerProfile()">
                 <div class="my-10">

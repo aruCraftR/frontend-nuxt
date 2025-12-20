@@ -2,13 +2,13 @@
 import type { ServerInfo, ServerProfile } from '~/types/api';
 
 
-defineProps<{
-    serverProfile: ServerProfile
+const props = defineProps<{
     serverInfo: ServerInfo
 }>()
 
 const { user } = useAuth()
 const { useServerProfileEditor } = useEditor()
+const { serverProfiles } = useData()
 const toast = useToast()
 type Colors = "neutral" | "primary" | "secondary" | "success" | "info" | "warning" | "error"
 const statusColors: Map<string, Colors> = new Map([
@@ -27,14 +27,22 @@ const statusText: Map<string, string> = new Map([
     ['unresponsive', '无响应'],
     ['unstarted', '未启动']
 ])
+const serverProfile: Ref<ServerProfile | undefined> = ref()
 
+watch(
+    () => props.serverInfo,
+    (info) => {
+        serverProfile.value = serverProfiles.value[info.id];
+    },
+    { immediate: true }
+);
 
 const openServerEditor = async (server?: ServerProfile) => {
     console.log(await useServerProfileEditor(server))
 }
 
 // @ts-expect-error ts认不出来扩展运算符内的类型
-const getCardMenuItems = (serverInfo: ServerInfo, serverProfile: ServerProfile): ContextMenuItem[] => [
+const getCardMenuItems = (serverInfo: ServerInfo): ContextMenuItem[] => [
     {
         label: '查看详细信息',
         icon: 'i-heroicons-information-circle',
@@ -62,7 +70,7 @@ const getCardMenuItems = (serverInfo: ServerInfo, serverProfile: ServerProfile):
                         color: 'warning',
                         icon: 'i-lucide-pencil',
                         onSelect() {
-                            openServerEditor(serverProfile)
+                            openServerEditor(serverProfiles.value[serverInfo.id])
                         }
                     },
                     {
@@ -83,7 +91,7 @@ const getCardMenuItems = (serverInfo: ServerInfo, serverProfile: ServerProfile):
 </script>
 
 <template>
-    <UContextMenu :items="getCardMenuItems(serverInfo, serverProfile)">
+    <UContextMenu :items="getCardMenuItems(serverInfo)">
         <UCard class="hover:shadow-lg transition-shadow duration-300 p-0">
             <div class="p-4">
                 <UPopover arrow mode="click">
@@ -91,11 +99,12 @@ const getCardMenuItems = (serverInfo: ServerInfo, serverProfile: ServerProfile):
                         <div class="flex flex-row">
                             <div class="flex flex-1 gap-2 mb-2">
                                 <h3 class="text-lg font-bold">
-                                    <span v-if="serverProfile.zh_cn_name">{{ serverProfile.zh_cn_name }}</span>
-                                    <span v-else-if="serverProfile.en_ww_name">{{ serverProfile.en_ww_name }}</span>
+                                    <span v-if="serverProfile?.zh_cn_name">{{ serverProfile.zh_cn_name }}</span>
+                                    <span v-else-if="serverProfile?.en_ww_name">{{ serverProfile.en_ww_name }}</span>
                                     <span v-else>{{ serverInfo.id }}</span>
                                 </h3>
-                                <span v-if="serverProfile.server_version" class="text-sm text-gray-500 self-end mb-0.5">
+                                <span v-if="serverProfile?.server_version"
+                                    class="text-sm text-gray-500 self-end mb-0.5">
                                     v{{ serverProfile.server_version }}
                                 </span>
                             </div>
@@ -116,7 +125,7 @@ const getCardMenuItems = (serverInfo: ServerInfo, serverProfile: ServerProfile):
                                     </UAvatarGroup>
                                 </div>
                             </div>
-                            <span v-if="serverProfile.mc_version">MC {{ serverProfile.mc_version }}</span>
+                            <span v-if="serverProfile?.mc_version">MC {{ serverProfile.mc_version }}</span>
                         </div>
                     </div>
                     <template #content>
