@@ -6,7 +6,7 @@ import type { ApiResponse, ServerInfo } from '~/types/api'
 definePageMeta({ title: '服务器列表' })
 
 const { serverList, lastFetchServerListTimestamp, isServerListLoaded } = useUi()
-const { checkServerProfiles, serverProfiles } = useData()
+const { checkServerProfiles } = useData()
 const { user } = useAuth()
 const { usePanelApi } = useApi()
 const { useServerProfileEditor } = useEditor()

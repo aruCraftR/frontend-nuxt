@@ -101,6 +101,8 @@ useHead({
                 <template #right>
                     <UButton icon="i-simple-icons-qq" color="neutral" variant="ghost" to="https://re.arucraftr.org"
                         target="_blank" aria-label="QQ" />
+                    <UButton icon="i-simple-icons-telegram" color="neutral" variant="ghost"
+                        to="https://t.me/+DWY82Dp-zAw4NDRl" target="_blank" aria-label="Telegram" />
                 </template>
             </UFooter>
         </div>
