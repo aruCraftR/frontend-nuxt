@@ -1,6 +1,7 @@
 <!-- pages/index.vue -->
 <script setup lang="ts">
 import type { ApiResponse, ServerInfo } from '~/types/api'
+import type { FetchError } from 'ofetch'
 
 
 definePageMeta({ title: '服务器列表' })
@@ -11,6 +12,7 @@ const { user } = useAuth()
 const { usePanelApi } = useApi()
 const { useServerProfileEditor } = useEditor()
 let isPageActivated = false;
+let catched401 = false;
 let timer: number;
 
 
@@ -19,14 +21,19 @@ const updateServers = async () => {
     const now = Date.now()
     if (now - lastFetchServerListTimestamp.value <= 5) return
     lastFetchServerListTimestamp.value = now
+    catched401 = false
     try {
         const response: ApiResponse<ServerInfo[]> = await usePanelApi('get', '/server/list')
         if (response.data !== null) {
             serverList.value = await checkServerProfiles(response.data)
             isServerListLoaded.value = true
         }
+    } catch (error) {
+        if ((error as FetchError).response?.status === 401) {
+            catched401 = true
+        }
     } finally {
-        if (isPageActivated) {
+        if (isPageActivated && !catched401) {
             timer = setTimeout(updateServers, 20000);
         }
     }
