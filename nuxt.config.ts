@@ -16,7 +16,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: 'https://api.arucraftr.org/panel', // 后端地址
+      apiBase: 'https://panel-api.arucraftr.org', // 后端地址
       appName: 'aruCraftR Player Panel'
     }
   },
@@ -38,7 +38,7 @@ export default defineNuxtConfig({
     domains: [
       'q1.qlogo.cn',
       'avatars.cloudhaven.gg',
-      'api.arucraftr.org',
+      'panel-api.arucraftr.org',
     ]
   }
 })
