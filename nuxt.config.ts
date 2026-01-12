@@ -5,13 +5,14 @@ export default defineNuxtConfig({
 
   modules: [
     '@nuxt/eslint',
-    '@nuxt/content',
+    // '@nuxt/content',
     '@nuxt/hints',
     '@nuxt/image',
     '@nuxt/scripts',
-    '@nuxt/test-utils',
+    // '@nuxt/test-utils',
     '@nuxt/ui',
-    '@vueuse/nuxt'
+    '@vueuse/nuxt',
+    '@vercel/speed-insights/nuxt'
   ],
 
   runtimeConfig: {
