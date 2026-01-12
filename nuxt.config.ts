@@ -12,7 +12,6 @@ export default defineNuxtConfig({
     // '@nuxt/test-utils',
     '@nuxt/ui',
     '@vueuse/nuxt',
-    '@vercel/speed-insights/nuxt'
   ],
 
   runtimeConfig: {

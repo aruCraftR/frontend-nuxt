@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SpeedInsights } from "@vercel/speed-insights/nuxt"
 useHead({
   titleTemplate: 'aruCraftR - %s',
 })
@@ -10,6 +11,7 @@ useHead({
       <NuxtPage />
     </NuxtLayout>
   </UApp>
+  <SpeedInsights />
 </template>
 
 <style>
