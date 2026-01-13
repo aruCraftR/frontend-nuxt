@@ -72,7 +72,7 @@ export const useAuth = () => {
      * 退出登录
      */
     const userLogout = async () => {
-        const response = await usePanelApi('get', '/player/logout')
+        const response = await usePanelApi('delete', '/player/session')
         console.log(response.data)
         if (response.data === null) {
             useToast().add({ title: '成功登出', color: 'success' })
