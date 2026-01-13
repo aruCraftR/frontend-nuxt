@@ -1,79 +1,44 @@
 <!-- pages/index.vue -->
 <script setup lang="ts">
-import type { ApiResponse, ServerInfo } from '~/types/api'
-import type { FetchError } from 'ofetch'
-
-
-definePageMeta({ title: '服务器列表' })
-
-const { serverList, lastFetchServerListTimestamp, isServerListLoaded } = useUi()
-const { checkServerProfiles } = useData()
+definePageMeta({ title: '导航页' })
 const { user } = useAuth()
-const { usePanelApi } = useApi()
-const { useServerProfileEditor } = useEditor()
-let isPageActivated = false;
-let catched401 = false;
-let timer: number;
-
-
-const updateServers = async () => {
-    if (!isPageActivated) return
-    const now = Date.now()
-    if (now - lastFetchServerListTimestamp.value <= 5) return
-    lastFetchServerListTimestamp.value = now
-    catched401 = false
-    try {
-        const response: ApiResponse<ServerInfo[]> = await usePanelApi('get', '/server/list')
-        if (response.data !== null) {
-            serverList.value = await checkServerProfiles(response.data)
-            isServerListLoaded.value = true
-        }
-    } catch (error) {
-        if ((error as FetchError).response?.status === 401) {
-            catched401 = true
-        }
-    } finally {
-        if (isPageActivated && !catched401) {
-            timer = setTimeout(updateServers, 20000);
-        }
-    }
-}
-
-
-onMounted(() => {
-    isPageActivated = true
-    updateServers()
-})
-
-onUnmounted(() => {
-    isPageActivated = false
-    clearTimeout(timer)
-})
-
-
-const createServerProfile = async () => {
-    if (!user.value || user.value.permission < 5) return
-    await useServerProfileEditor()
-}
-
 </script>
 
 <template>
-    <UPageHero v-if="!isServerListLoaded" headline="稍安勿躁哦" title="正在获取服务器列表" description="CloudFlare在国内的访问速度可能偏慢" />
-    <div v-else-if="serverList.length > 0" class="space-y-5">
-        <UBanner title="点击对应卡片可查看玩家列表" icon="i-lucide-info" class="rounded-xl" color="primary" />
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-            <ServerInfoCard v-for="server in serverList" :key="server.id" :server-info="server" />
-            <UCard v-if="user && user.permission >= 5" class="hover:scale-105 transition-scale duration-200 p-0"
-                @click="createServerProfile()">
-                <div class="my-10">
-                    <UIcon name="i-heroicons-squares-plus" class="size-10 justify-center w-full text-neutral-500" />
-                    <p class="w-full text-center text-neutral-500">添加服务器</p>
-                </div>
-            </UCard>
-        </div>
-    </div>
-    <UPageHero v-else-if="serverList.length == 0" headline="啊嘞?" title="没有服务器在线" description="或许有什么特殊状况?"
-        @click="createServerProfile" />
+  <div class="px-8 flex justify-center">
+    <div class="w-full max-w-4xl">
 
+      <UPageSection title="aruCraftR网页导航" icon="i-lucide-rocket" />
+
+      <UPageGrid class="gap-5">
+
+        <NavStrip title="官网" to="https://www.arucraftr.org" tooltip="查看官方组件库文档" icon="i-heroicons-home"
+          color="primary" />
+
+        <NavStrip title="在线列表" to="/online" tooltip="查看官方组件库文档" icon="i-heroicons-server-stack" color="success" />
+
+        <NavStrip title="服务状态监控" to="https://status.arucraftr.org" tooltip="查看各服务在线状态" icon="i-heroicons-bug-ant"
+          color="error" />
+
+        <NavStrip title="GitHub组织" to="https://github.com/aruCraftR" tooltip="提建议 / 做贡献 ?" icon="i-simple-icons-github"
+          color="neutral" />
+
+        <NavStrip title="新包投票" to="https://new-server-vote.arucraftr.org" tooltip="为新包投票吧"
+          icon="i-heroicons-check-circle" color="info" />
+
+        <NavStrip title="整合包收集表" to="http://collect.arucraftr.org" tooltip="填写你想玩的整合包吧~"
+          icon="i-heroicons-clipboard-document-list" color="warning" />
+
+        <NavStrip v-if="user && user.permission >= 3" title="MCSM面板" to="https://mcsm.arucraftr.org" tooltip="MCSM管理面板"
+          icon="i-heroicons-command-line" color="success" />
+
+        <NavStrip v-if="user && user.permission >= 3" title="整合包收集结果" to="http://collect.arucraftr.org/results"
+          tooltip="查看整合包收集结果表格" icon="i-heroicons-table-cells" color="warning" />
+
+        <NavStrip v-if="user && user.permission >= 4" title="NapCat面板" to="https://napcat.arucraftr.org"
+          tooltip="NapCat网页面板" icon="i-heroicons-chat-bubble-left-right" color="info" />
+
+      </UPageGrid>
+    </div>
+  </div>
 </template>

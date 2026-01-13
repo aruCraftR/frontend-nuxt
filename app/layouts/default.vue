@@ -4,7 +4,8 @@ const { isSidebarCollapsed, toggleSidebar } = useUi()
 const { user, userLogout } = useAuth()
 
 const links = [
-    { label: '服务器状态', icon: 'i-heroicons-server', to: '/' },
+    { label: '导航页', icon: 'i-heroicons-map-pin', to: '/' },
+    { label: '在线状态', icon: 'i-heroicons-server', to: '/online' },
     { label: '聊天', icon: 'i-heroicons-chat-bubble-left-right', to: '/chat' },
     { label: '玩家设置', icon: 'i-heroicons-user-circle', to: '/player' },
 ]
@@ -59,7 +60,6 @@ useHead({
                 <header
                     class="h-16 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-30">
                     <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
-                        <UIcon v-if="route.path === '/'" name="i-heroicons-server" class="text-gray-400" />
                         {{ route.meta.title || 'Player Panel' }}
                     </h1>
 
@@ -87,7 +87,7 @@ useHead({
                     </div>
                 </header>
 
-                <div class="flex-1 overflow-auto p-6 relative">
+                <div class="flex-1 overflow-auto p-5 relative">
                     <slot />
                 </div>
             </UMain>
