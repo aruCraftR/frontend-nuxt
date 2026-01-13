@@ -8,7 +8,10 @@ const { user } = useAuth()
   <div class="px-8 flex justify-center">
     <div class="w-full max-w-4xl">
 
-      <UPageSection title="aruCraftR网页导航" icon="i-lucide-rocket" />
+      <div class="text-center pt-5 pb-10">
+        <UIcon name="i-lucide-rocket" class="text-primary text-4xl" />
+        <h1 class="text-4xl font-bold text-highlighted pt-5">aruCraftR 网页导航</h1>
+      </div>
 
       <UPageGrid class="gap-5">
 
