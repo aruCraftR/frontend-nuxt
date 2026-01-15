@@ -1,6 +1,11 @@
 <!-- pages/chat.vue -->
 <script setup lang="ts">
-definePageMeta({ title: '服务器聊天 占位页面' })
+import { AccountPermission } from '~/constances'
+
+definePageMeta({
+    title: '服务器聊天 占位页面',
+    permission: AccountPermission.USER,
+})
 
 const message = ref('')
 const messages = ref([

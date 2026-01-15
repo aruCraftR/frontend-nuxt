@@ -1,6 +1,11 @@
 <!-- pages/index.vue -->
 <script setup lang="ts">
-definePageMeta({ title: '导航页' })
+import { AccountPermission } from '~/constances';
+
+definePageMeta({
+  title: '导航页',
+  permission: AccountPermission.USER,
+})
 const { user } = useAuth()
 </script>
 
@@ -32,14 +37,16 @@ const { user } = useAuth()
         <NavStrip title="整合包收集表" to="http://collect.arucraftr.org" tooltip="填写你想玩的整合包吧~"
           icon="i-heroicons-clipboard-document-list" color="warning" />
 
-        <NavStrip v-if="user && user.permission >= 3" title="MCSM面板" to="https://mcsm.arucraftr.org" tooltip="MCSM管理面板"
-          icon="i-heroicons-command-line" color="success" />
+        <NavStrip v-if="user && user.permission >= AccountPermission.HELPER" title="MCSM面板"
+          to="https://mcsm.arucraftr.org" tooltip="MCSM管理面板" icon="i-heroicons-command-line" color="success" />
 
-        <NavStrip v-if="user && user.permission >= 3" title="整合包收集结果" to="http://collect.arucraftr.org/results"
-          tooltip="查看整合包收集结果表格" icon="i-heroicons-table-cells" color="warning" />
+        <NavStrip v-if="user && user.permission >= AccountPermission.HELPER" title="整合包收集结果"
+          to="http://collect.arucraftr.org/results" tooltip="查看整合包收集结果表格" icon="i-heroicons-table-cells"
+          color="warning" />
 
-        <NavStrip v-if="user && user.permission >= 4" title="NapCat面板" to="https://napcat.arucraftr.org"
-          tooltip="NapCat网页面板" icon="i-heroicons-chat-bubble-left-right" color="info" />
+        <NavStrip v-if="user && user.permission >= AccountPermission.ADMIN" title="NapCat面板"
+          to="https://napcat.arucraftr.org" tooltip="NapCat网页面板" icon="i-heroicons-chat-bubble-left-right"
+          color="info" />
 
       </UPageGrid>
     </div>

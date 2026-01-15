@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import * as z from 'zod'
+import { AccountPermission } from '~/constances'
 import type { ApiResponse, LoginResponse } from '~/types/api'
 definePageMeta({
     layout: 'empty',
-    title: '登录 - aruCraftR'
+    title: '登录 - aruCraftR',
+    permission: AccountPermission.USER,
 })
 
 const { startCooldown, cooldown, setLoginSuccess, token } = useAuth()
@@ -36,7 +38,7 @@ const passwordLogin = async () => {
     if (token.value) { navigateTo('/'); return }
     loading.value = true
     try {
-        const response: ApiResponse<LoginResponse> = await usePanelApi('post', '/login/password', { 'player_id': passwordState.player_id, 'password': passwordState.password })
+        const response: ApiResponse<LoginResponse> = await usePanelApi('post', '/login/password', { 'body': { 'player_id': passwordState.player_id, 'password': passwordState.password } })
         if (response.code === 200 && response.data !== null) {
             toast.add({ title: '登录成功', description: `欢迎回到aruCraftR, ${response.data.user.player_id}`, color: 'success', icon: 'i-heroicons-check-circle' })
             setLoginSuccess(response.data)
@@ -51,7 +53,7 @@ const captchaLogin = async () => {
     if (token.value) { navigateTo('/'); return }
     loading.value = true
     try {
-        const response: ApiResponse<LoginResponse> = await usePanelApi('post', '/login/captcha', { 'player_id': captchaState.player_id, 'captcha': captchaState.captcha })
+        const response: ApiResponse<LoginResponse> = await usePanelApi('post', '/login/captcha', { 'body': { 'player_id': captchaState.player_id, 'captcha': captchaState.captcha } })
         if (response.code === 200 && response.data !== null) {
             toast.add({ title: '登录成功', description: `欢迎回到aruCraftR, ${response.data.user.player_id}`, color: 'success', icon: 'i-heroicons-check-circle' })
             setLoginSuccess(response.data)
@@ -74,7 +76,7 @@ const sendCaptcha = async () => {
     }
     startCooldown()
     try {
-        const response = await usePanelApi('post', '/login/send_captcha', { 'player_id': captchaState.player_id })
+        const response = await usePanelApi('post', '/login/send_captcha', { 'body': { 'player_id': captchaState.player_id } })
         if (response.code === 200) {
             toast.add({ title: '验证码已发送', color: 'success', description: '请查看服务器聊天栏以获取验证码', duration: 10000 })
         } else {

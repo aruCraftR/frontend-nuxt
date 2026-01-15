@@ -1,7 +1,7 @@
 import type { ServerInfo } from "~/types/api"
 
 export const useUi = () => {
-    const isSidebarCollapsed = useState<boolean>('ui_sidebar_collapsed', () => true)
+    const isSidebarCollapsed = useState<boolean>('ui_sidebar_collapsed', () => false)
     const serverList = useState<ServerInfo[]>('ui_servers', () => [])
     const hiddenServers = useState<Set<string>>('ui_servers', () => new Set())
     const lastFetchServerListTimestamp = useState<number>('ui_last_fetch_server_list_timestamp', () => 0)

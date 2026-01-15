@@ -11,7 +11,7 @@ type Method = "get" | "post" | "head" | "patch" | "put" | "delete" | "connect" |
 export const useApi = () => {
     const config = useRuntimeConfig()
     const toast = useToast()
-    const usePanelApi = <T>(method: Method, url: string, body?: Record<string, any> | any[], options: any = {}) => {
+    const usePanelApi = <T>(method: Method, url: string, options?: Record<string, any>) => {
         const { token, logout } = useAuth()
         const headers: Record<string, string> = {}
         if (token.value) {
@@ -21,7 +21,6 @@ export const useApi = () => {
         return $fetch<ApiResponse<T>>(url, {
             baseURL: config.public.apiBase,
             method: method,
-            body: body,
             headers: headers,
             ...options,
 
@@ -55,6 +54,9 @@ export const useApi = () => {
                         break;
                     case 404:
                         toast.add({ title: 'API错误', description: '请求的API不存在', color: 'error' });
+                        break;
+                    case 422:
+                        toast.add({ title: 'API错误', description: '请求数据不符合对应API指定的格式', color: 'error' });
                         break;
                     default:
                         toast.add({ title: 'API错误', description: `Status: ${response.status}`, color: 'error' })

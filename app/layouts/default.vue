@@ -1,14 +1,28 @@
 <script setup lang="ts">
+import { AccountPermission } from '~/constances'
+import type { AsideItem } from '~/types/misc'
+
 const route = useRoute()
 const { isSidebarCollapsed, toggleSidebar } = useUi()
 const { user, userLogout } = useAuth()
 
-const links = [
+const links: Ref<AsideItem[]> = ref([
     { label: '导航页', icon: 'i-heroicons-map-pin', to: '/' },
-    { label: '在线状态', icon: 'i-heroicons-server', to: '/online' },
+    { label: '在线状态', icon: 'i-heroicons-server', to: '/online', color: 'success' },
     { label: '聊天', icon: 'i-heroicons-chat-bubble-left-right', to: '/chat' },
-    { label: '玩家设置', icon: 'i-heroicons-user-circle', to: '/player' },
-]
+])
+
+if (user.value?.permission && user.value?.permission >= AccountPermission.ADMIN) {
+    links.value.push(
+        'sep',
+        { label: '玩家数据', icon: 'i-heroicons-users', to: '/manager/players', color: 'warning' },
+    )
+}
+
+links.value.push(
+    'sep',
+    { label: '玩家设置', icon: 'i-heroicons-user-circle', to: '/player', color: 'secondary' },
+)
 
 useHead({
     meta: [{ property: 'og:title', content: `aruCraftR - ${route.meta.title}` }],
@@ -19,38 +33,41 @@ useHead({
 <template>
     <div
         class="relative flex w-full overflow-hidden text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-950 max-h-screen">
-        <aside class="z-20 flex flex-col border-r border-gray-200 dark:border-gray-800 transition-all duration-500">
+        <aside
+            class="z-20 flex flex-col border-r border-gray-200 dark:border-gray-800 transition-[width] duration-300 ease-in-out overflow-hidden"
+            :class="isSidebarCollapsed ? 'w-18' : 'w-48'">
             <!-- Logo -->
-            <UContainer
-                class="h-16 flex items-center justify-center border-b border-gray-200 dark:border-gray-800 shrink-0 p-0">
-                <span v-if="!isSidebarCollapsed" class="font-bold text-primary-500 truncate px-2 text-lg tracking-wide">
+            <div class="h-16 flex items-center justify-center border-b border-gray-200 dark:border-gray-800 shrink-0">
+                <span v-if="!isSidebarCollapsed"
+                    class="font-bold text-primary-500 truncate px-2 text-lg tracking-wide whitespace-nowrap">
                     aruCraftR
                 </span>
-                <UIcon v-else name="i-heroicons-cube-transparent" class="w-8 h-8 text-primary-500" />
-            </UContainer>
+                <UIcon v-else name="i-lucide-atom" class="w-8 h-8 text-primary-500" />
+            </div>
 
             <!-- 菜单 -->
-            <UContainer class="flex-1 overflow-y-auto py-4 px-2 space-y-1">
-                <UButton v-for="link in links" :key="link.to" :to="link.to" :icon="link.icon"
-                    :label="isSidebarCollapsed ? '' : link.label" variant="ghost" color="neutral"
-                    class="w-full justify-start transition-all" :class="{ 'justify-center px-0': isSidebarCollapsed }"
-                    active-class="bg-primary-50 dark:bg-primary-900/10 text-primary-500" />
-            </UContainer>
+            <div
+                class="flex-1 items-center justify-center pt-4 space-y-1 px-2 overflow-y-auto overflow-x-hidden scrollbar-thin">
+                <div v-for="(link, index) in links" :key="index">
+                    <USeparator v-if="link === 'sep'" />
+                    <SideMenuButton v-else :item="link" :collapsed="isSidebarCollapsed" />
+                </div>
+            </div>
 
             <!-- 底部工具 -->
-            <UContainer class="p-2 border-t border-gray-200 dark:border-gray-800 flex flex-col gap-2 shrink-0">
+            <div class="p-2 border-t border-gray-200 dark:border-gray-800 flex flex-col gap-2 shrink-0">
                 <ClientOnly>
-                    <UButton :icon="$colorMode.value === 'dark' ? 'i-heroicons-moon' : 'i-heroicons-sun'"
-                        color="neutral" variant="ghost" block
-                        @click="$colorMode.preference = $colorMode.value === 'dark' ? 'light' : 'dark'">
-                        <span v-if="!isSidebarCollapsed">{{ $colorMode.value === 'dark' ? '深色模式' : '浅色模式' }}</span>
-                    </UButton>
+                    <!-- 1. 深色模式切换按钮：复用组件样式 -->
+                    <SideMenuButton :collapsed="isSidebarCollapsed"
+                        :icon="$colorMode.value === 'dark' ? 'i-heroicons-moon' : 'i-heroicons-sun'"
+                        :label="$colorMode.value === 'dark' ? '深色模式' : '浅色模式'" color="secondary"
+                        @click="$colorMode.preference = $colorMode.value === 'dark' ? 'light' : 'dark'" />
                 </ClientOnly>
 
-                <UButton
+                <SideMenuButton :collapsed="isSidebarCollapsed"
                     :icon="isSidebarCollapsed ? 'i-heroicons-chevron-double-right' : 'i-heroicons-chevron-double-left'"
-                    color="neutral" variant="ghost" block @click="toggleSidebar" />
-            </UContainer>
+                    :label="isSidebarCollapsed ? '展开' : '收起菜单'" color="neutral" @click="toggleSidebar" />
+            </div>
         </aside>
 
         <!-- 主内容 -->

@@ -1,3 +1,4 @@
+import { AccountPermission } from '~/constances'
 import type { LoginResponse, AuthedPlayerInfo } from '~/types/api'
 
 /**
@@ -63,7 +64,7 @@ export const useAuth = () => {
      */
     const logout = () => {
         token.value = null
-        user.value = { player_id: '', uuid: '', qq_id: '', permission: 0 }
+        user.value = { player_id: '', uuid: '', qq_id: '', permission: AccountPermission.USER }
         navigateTo('/login')
         return
     }
@@ -78,7 +79,7 @@ export const useAuth = () => {
             useToast().add({ title: '成功登出', color: 'success' })
         }
         token.value = null
-        user.value = { player_id: '', uuid: '', qq_id: '', permission: 0 }
+        user.value = { player_id: '', uuid: '', qq_id: '', permission: AccountPermission.USER }
         navigateTo('/login')
         return
     }

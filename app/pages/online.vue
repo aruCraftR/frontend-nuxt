@@ -2,9 +2,13 @@
 <script setup lang="ts">
 import type { ApiResponse, ServerInfo } from '~/types/api'
 import type { FetchError } from 'ofetch'
+import { AccountPermission } from '~/constances'
 
 
-definePageMeta({ title: '服务器列表' })
+definePageMeta({
+    title: '服务器列表',
+    permission: AccountPermission.USER,
+})
 
 const { serverList, lastFetchServerListTimestamp, isServerListLoaded } = useUi()
 const { checkServerProfiles } = useData()
@@ -52,7 +56,7 @@ onUnmounted(() => {
 
 
 const createServerProfile = async () => {
-    if (!user.value || user.value.permission < 5) return
+    if (!user.value || user.value.permission < AccountPermission.ADMIN) return
     await useServerProfileEditor()
 }
 
@@ -64,8 +68,8 @@ const createServerProfile = async () => {
         <UBanner title="点击对应卡片可查看玩家列表" icon="i-lucide-info" class="rounded-xl" color="primary" />
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
             <ServerInfoCard v-for="server in serverList" :key="server.id" :server-info="server" />
-            <UCard v-if="user && user.permission >= 5" class="hover:scale-105 transition-scale duration-200 p-0"
-                @click="createServerProfile()">
+            <UCard v-if="user && user.permission >= AccountPermission.ADMIN"
+                class="hover:scale-105 transition-scale duration-200 p-0" @click="createServerProfile()">
                 <div class="my-10">
                     <UIcon name="i-heroicons-squares-plus" class="size-10 justify-center w-full text-neutral-500" />
                     <p class="w-full text-center text-neutral-500">添加服务器</p>

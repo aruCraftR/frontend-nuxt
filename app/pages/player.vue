@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import * as z from 'zod'
+import { AccountPermission } from '~/constances'
 import type { ApiResponse, PlayerProfile } from '~/types/api'
-definePageMeta({ title: '玩家设置' })
+definePageMeta({
+    title: '玩家设置',
+    permission: AccountPermission.USER,
+})
 
 const { user, userLogout } = useAuth()
 const { usePanelApi } = useApi()
@@ -32,7 +36,7 @@ const saveProfile = async () => {
             return
         }
         try {
-            const response = await usePanelApi('post', '/player/change_password', { 'password': formState.password })
+            const response = await usePanelApi('post', '/player/change_password', { 'body': { 'password': formState.password } })
             if (response.code === 200) {
                 toast.add({ title: '密码已更改', color: 'success' })
                 formState.password = ''
@@ -52,7 +56,7 @@ const saveProfile = async () => {
     }
     if (Object.keys(updatedProfile).length !== 0) {
         try {
-            const response = await usePanelApi('post', '/player/update_profile', updatedProfile)
+            const response = await usePanelApi('patch', '/player/update_profile', { 'body': updatedProfile })
             if (response.code === 200) {
                 toast.add({ title: '个人设置已更新', color: 'success' })
             }

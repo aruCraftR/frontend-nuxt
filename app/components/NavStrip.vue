@@ -1,17 +1,17 @@
 <script setup lang="ts">
+import type { Colors } from '~/types/misc';
+
 /**
  * NavStrip Component
  * 一个用于导航页的条状链接组件，包含图标、标题、链接描述和悬浮提示。
  */
-type ColorVariant = 'neutral' | 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'error';
-
 interface Props {
     title: string;
     to: string;
     displayLink?: string;
     tooltip?: string;
     icon?: string;
-    color?: ColorVariant;
+    color?: Colors;
     target?: '_blank' | '_self';
 }
 
@@ -48,7 +48,7 @@ const formattedLink = computed(() => {
     }
 });
 
-const colorStyles: Record<ColorVariant, { iconBox: string, icon: string, hoverBorder: string, hoverBg: string }> = {
+const colorStyles: Record<Colors, { iconBox: string, icon: string, hoverBorder: string, hoverBg: string }> = {
     neutral: {
         iconBox: 'bg-gray-100 dark:bg-gray-800',
         icon: 'text-gray-500 dark:text-gray-400',

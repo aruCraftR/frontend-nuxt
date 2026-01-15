@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { AccountPermission } from '~/constances';
 import type { ServerInfo, ServerProfile } from '~/types/api';
+import type { Colors } from '~/types/misc';
 
 
 const props = defineProps<{
@@ -10,7 +12,6 @@ const { user } = useAuth()
 const { useServerProfileEditor } = useEditor()
 const { serverProfiles } = useData()
 const toast = useToast()
-type Colors = "neutral" | "primary" | "secondary" | "success" | "info" | "warning" | "error"
 const statusColors: Map<string, Colors> = new Map([
     ['active', 'success'],
     ['starting', 'primary'],
@@ -57,7 +58,7 @@ const getCardMenuItems = (serverInfo: ServerInfo): ContextMenuItem[] => [
             toast.add({ title: '聊天功能正在开发中', color: 'neutral' })
         }
     },
-    ...(user.value && user.value.permission >= 5 ? [
+    ...(user.value && user.value.permission >= AccountPermission.ADMIN ? [
         { type: 'separator' },
         {
             label: '管理员',

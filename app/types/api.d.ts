@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // types/api.d.ts
 
-type Colors = "neutral" | "primary" | "secondary" | "success" | "info" | "warning" | "error"
+import type { AccountPermission } from "~/constances";
 
 export interface ApiResponse<T = any> {
     code: number;
@@ -15,7 +15,7 @@ export interface LoginResponse {
 }
 
 export interface AuthedPlayerInfo extends BasePlayerInfo {
-    permission: number;
+    permission: AccountPermission;
 }
 
 export interface BasePlayerInfo {
