@@ -36,7 +36,7 @@ const saveProfile = async () => {
             return
         }
         try {
-            const response = await usePanelApi('post', '/player/change_password', { 'body': { 'password': formState.password } })
+            const response = await usePanelApi('post', '/player/password', { 'body': { 'password': formState.password } })
             if (response.code === 200) {
                 toast.add({ title: '密码已更改', color: 'success' })
                 formState.password = ''
@@ -56,7 +56,7 @@ const saveProfile = async () => {
     }
     if (Object.keys(updatedProfile).length !== 0) {
         try {
-            const response = await usePanelApi('patch', '/player/update_profile', { 'body': updatedProfile })
+            const response = await usePanelApi('patch', '/player/profile', { 'body': updatedProfile })
             if (response.code === 200) {
                 toast.add({ title: '个人设置已更新', color: 'success' })
             }
