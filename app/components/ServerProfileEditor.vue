@@ -33,7 +33,7 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
     }
     loading.value = true
     try {
-        await usePanelApi('put', `/server/profile/${event.data.server_id}`, { 'body': event.data })
+        await usePanelApi('put', `/servers/${event.data.server_id}`, { 'body': event.data })
     } catch {
         return
     } finally {

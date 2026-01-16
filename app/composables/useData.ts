@@ -23,7 +23,7 @@ export const useData = () => {
             missingProfiles.push(info.id)
         }
         if (missingProfiles.length) {
-            const response: ApiResponse<ServerProfile[]> = await usePanelApi('post', '/server/get_profiles', { 'body': missingProfiles })
+            const response: ApiResponse<ServerProfile[]> = await usePanelApi('get', '/servers', { 'query': { 'ids': missingProfiles } })
             if (response.data) {
                 for (const i of response.data)
                     serverProfiles.value[i.server_id] = i

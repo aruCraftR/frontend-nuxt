@@ -189,7 +189,7 @@ async function changePermission(item: PlayerTabelItem) {
   tableData.value = []
   setPermissionValue.value = AccountPermission.USER
   try {
-    await usePanelApi('patch', `/player/permission/${item.uuid}`, {
+    await usePanelApi('patch', `/players/${item.uuid}/permission`, {
       'body': {
         'permission': permission,
       }

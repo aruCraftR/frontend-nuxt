@@ -27,7 +27,7 @@ const updateServers = async () => {
     lastFetchServerListTimestamp.value = now
     catched401 = false
     try {
-        const response: ApiResponse<ServerInfo[]> = await usePanelApi('get', '/server/list')
+        const response: ApiResponse<ServerInfo[]> = await usePanelApi('get', '/servers/status')
         if (response.data !== null) {
             serverList.value = await checkServerProfiles(response.data)
             isServerListLoaded.value = true

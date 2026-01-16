@@ -1,5 +1,5 @@
 import { AccountPermission } from '~/constances'
-import type { LoginResponse, AuthedPlayerInfo } from '~/types/api'
+import type { LoginResponse, PlayerInfo } from '~/types/api'
 
 /**
  * 用户认证与授权逻辑
@@ -12,7 +12,7 @@ export const useAuth = () => {
     })
 
     // 2. User Info: 使用 useState 在应用内共享状态
-    const user = useCookie<AuthedPlayerInfo | null>('auth_user', {
+    const user = useCookie<PlayerInfo | null>('auth_user', {
         maxAge: 60 * 60 * 24 + 3600 // 25小时
     })
 
@@ -73,7 +73,7 @@ export const useAuth = () => {
      * 退出登录
      */
     const userLogout = async () => {
-        const response = await usePanelApi('delete', '/player/session')
+        const response = await usePanelApi('delete', '/players/me/session')
         console.log(response.data)
         if (response.data === null) {
             useToast().add({ title: '成功登出', color: 'success' })

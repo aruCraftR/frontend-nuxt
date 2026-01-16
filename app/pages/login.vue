@@ -76,7 +76,7 @@ const sendCaptcha = async () => {
     }
     startCooldown()
     try {
-        const response = await usePanelApi('post', '/login/send_captcha', { 'body': { 'player_id': captchaState.player_id } })
+        const response = await usePanelApi('post', '/login/send-captcha', { 'body': { 'player_id': captchaState.player_id } })
         if (response.code === 200) {
             toast.add({ title: '验证码已发送', color: 'success', description: '请查看服务器聊天栏以获取验证码', duration: 10000 })
         } else {

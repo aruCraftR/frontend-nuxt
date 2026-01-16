@@ -36,7 +36,7 @@ const saveProfile = async () => {
             return
         }
         try {
-            const response = await usePanelApi('post', '/player/password', { 'body': { 'password': formState.password } })
+            const response = await usePanelApi('post', '/players/me/password', { 'body': { 'password': formState.password } })
             if (response.code === 200) {
                 toast.add({ title: '密码已更改', color: 'success' })
                 formState.password = ''
@@ -56,7 +56,7 @@ const saveProfile = async () => {
     }
     if (Object.keys(updatedProfile).length !== 0) {
         try {
-            const response = await usePanelApi('patch', '/player/profile', { 'body': updatedProfile })
+            const response = await usePanelApi('patch', '/players/me/profile', { 'body': updatedProfile })
             if (response.code === 200) {
                 toast.add({ title: '个人设置已更新', color: 'success' })
             }
@@ -69,7 +69,7 @@ const saveProfile = async () => {
 
 const loadProfile = async () => {
     loading.value = true
-    const response: ApiResponse<PlayerProfile> = await usePanelApi('get', '/player/profile')
+    const response: ApiResponse<PlayerProfile> = await usePanelApi('get', '/players/me/profile')
     if (response.code === 200) {
         oldProfile = response.data
         formState.online_qq_suffix = response.data?.online_qq_suffix

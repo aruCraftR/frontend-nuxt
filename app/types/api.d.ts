@@ -11,17 +11,14 @@ export interface ApiResponse<T = any> {
 
 export interface LoginResponse {
     token: string;
-    user: AuthedPlayerInfo;
+    user: PlayerInfo;
 }
 
-export interface AuthedPlayerInfo extends BasePlayerInfo {
-    permission: AccountPermission;
-}
-
-export interface BasePlayerInfo {
+export interface PlayerInfo {
     player_id: string;
     uuid: string;
     qq_id: string;
+    permission: AccountPermission;
 }
 
 type ServerStatus = 'active' | 'starting' | 'stopping' | 'stopped' | 'unresponsive'
@@ -32,7 +29,7 @@ export interface ServerInfo {
     status: ServerStatus
     max_players: number
     player_count: number
-    players: BasePlayerInfo[]
+    players: PlayerInfo[]
 }
 
 export interface ServerProfile {
