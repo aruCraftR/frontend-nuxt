@@ -1,5 +1,5 @@
 import { AccountPermission } from '~/constances'
-import type { LoginResponse, PlayerInfo } from '~/types/api'
+import type { LoginResponse, AuthedPlayerInfo } from '~/types/api'
 
 /**
  * 用户认证与授权逻辑
@@ -12,7 +12,7 @@ export const useAuth = () => {
     })
 
     // 2. User Info: 使用 useState 在应用内共享状态
-    const user = useCookie<PlayerInfo | null>('auth_user', {
+    const user = useCookie<AuthedPlayerInfo | null>('auth_user', {
         maxAge: 60 * 60 * 24 + 3600 // 25小时
     })
 
@@ -64,7 +64,7 @@ export const useAuth = () => {
      */
     const logout = () => {
         token.value = null
-        user.value = { player_id: '', uuid: '', qq_id: '', permission: AccountPermission.USER }
+        user.value = { player_id: '', uuid: '', avatar: { source: 'mc_skin' }, permission: AccountPermission.USER }
         navigateTo('/login')
         return
     }
@@ -79,7 +79,7 @@ export const useAuth = () => {
             useToast().add({ title: '成功登出', color: 'success' })
         }
         token.value = null
-        user.value = { player_id: '', uuid: '', qq_id: '', permission: AccountPermission.USER }
+        user.value = { player_id: '', uuid: '', avatar: { source: 'mc_skin' }, permission: AccountPermission.USER }
         navigateTo('/login')
         return
     }

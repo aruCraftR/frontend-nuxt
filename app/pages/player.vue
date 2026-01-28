@@ -11,6 +11,7 @@ const { user, userLogout } = useAuth()
 const { usePanelApi } = useApi()
 const toast = useToast()
 const loading = ref(true)
+const qqId: Ref<string | undefined> = ref(undefined)
 const showOnlineSuffixPrev = ref(false)
 const showOfflineSuffixPrev = ref(false)
 let oldProfile: PlayerProfile | null = null
@@ -75,6 +76,7 @@ const loadProfile = async () => {
         formState.online_qq_suffix = response.data?.online_qq_suffix
         formState.offline_qq_suffix = response.data?.offline_qq_suffix
         loading.value = false
+        qqId.value = response.data?.social_accounts.qq
     }
 }
 
@@ -98,14 +100,15 @@ onMounted(() => {
 
                 <UForm :schema="formSchema" :state="formState" class="space-y-4" :disabled="loading">
                     <div class="flex space-x-6">
-                        <UFormField label="绑定QQ">
-                            <UInput :model-value="user?.qq_id" disabled />
+                        <UFormField v-if="qqId !== undefined" label="绑定QQ">
+                            <UInput :model-value="qqId" disabled />
                         </UFormField>
                         <UFormField label="更改密码" name="password">
                             <UInput v-model="formState.password" placeholder="若不需要更改密码可留空" type="password" />
                         </UFormField>
                     </div>
-                    <div class="flex space-x-6">
+                    <div v-if="formState.online_qq_suffix !== undefined && formState.offline_qq_suffix !== undefined"
+                        class="flex space-x-6">
                         <UTooltip :delay-duration="0" :open="showOnlineSuffixPrev">
                             <UFormField label="在线QQ后缀" name="online_qq_suffix">
                                 <UInput v-model="formState.online_qq_suffix" placeholder="| {s}在线"

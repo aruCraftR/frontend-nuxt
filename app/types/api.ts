@@ -11,13 +11,25 @@ export interface ApiResponse<T = any> {
 
 export interface LoginResponse {
     token: string;
-    user: PlayerInfo;
+    user: AuthedPlayerInfo;
+}
+
+export interface MinecraftSkinAvatarInfo {
+    source: 'mc_skin'
+}
+
+export interface QQAvatarInfo {
+    source: 'qq'
+    qq_id: string
 }
 
 export interface PlayerInfo {
     player_id: string;
     uuid: string;
-    qq_id: string;
+    avatar: MinecraftSkinAvatarInfo | QQAvatarInfo
+}
+
+export interface AuthedPlayerInfo extends PlayerInfo {
     permission: AccountPermission;
 }
 
@@ -42,8 +54,20 @@ export interface ServerProfile {
     announcement?: string;
 }
 
+export interface PlayerSocialAccounts {
+    qq?: string
+}
 
 export interface PlayerProfile {
     online_qq_suffix: string;
     offline_qq_suffix: string;
+    social_accounts: PlayerSocialAccounts;
+    avatar_source: 'mc_skin' | 'qq'
+}
+
+export function getAvatarSrc(player: PlayerInfo) {
+    switch (player.avatar.source) {
+        case 'mc_skin': return `https://avatars.cloudhaven.gg/avatars/${player.uuid || '853c80ef3c3749fdaa49938b674adae6'}`;
+        case 'qq': return `https://q1.qlogo.cn/g?b=qq&nk=${player.avatar.qq_id}&s=140`;
+    }
 }

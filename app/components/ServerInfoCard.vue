@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { AccountPermission } from '~/constances';
-import type { ServerInfo, ServerProfile } from '~/types/api';
+import { getAvatarSrc, type ServerInfo, type ServerProfile } from '~/types/api';
 import type { Colors } from '~/types/misc';
 
 
@@ -121,8 +121,7 @@ const getCardMenuItems = (serverInfo: ServerInfo): ContextMenuItem[] => [
                                 <div>
                                     <UAvatarGroup size="2xs" :max="3" class="ml-1">
                                         <UAvatar v-for="player in serverInfo.players" :key="player.player_id"
-                                            :alt="player?.player_id"
-                                            :src="`https://q1.qlogo.cn/g?b=qq&nk=${player.qq_id || 0}&s=140`" />
+                                            :alt="player?.player_id" :src="getAvatarSrc(player)" />
                                     </UAvatarGroup>
                                 </div>
                             </div>
@@ -133,7 +132,7 @@ const getCardMenuItems = (serverInfo: ServerInfo): ContextMenuItem[] => [
                         <div v-if="serverInfo.players.length > 0" class="p-3 grid grid-cols-2 gap-2">
                             <UUser v-for="player in serverInfo.players" :key="player.player_id"
                                 :name="player?.player_id" :avatar="{
-                                    src: `https://q1.qlogo.cn/g?b=qq&nk=${player.qq_id || 0}&s=140`
+                                    src: getAvatarSrc(player)
                                 }" alt="Avatar" size="sm" />
                             <!-- MC头像: `https://avatars.cloudhaven.gg/avatars/${player?.uuid || '853c80ef3c3749fdaa49938b674adae6'}` -->
                         </div>
