@@ -38,7 +38,7 @@ const passwordLogin = async () => {
     if (token.value) { navigateTo('/'); return }
     loading.value = true
     try {
-        const response: ApiResponse<LoginResponse> = await usePanelApi('post', '/login/password', { 'body': { 'name': passwordState.name, 'password': passwordState.password } })
+        const response: ApiResponse<LoginResponse> = await usePanelApi('post', '/login/password', { 'body': { 'player_id': passwordState.name, 'password': passwordState.password } })
         if (response.code === 200 && response.data !== null) {
             toast.add({ title: '登录成功', description: `欢迎回到aruCraftR, ${response.data.user.name}`, color: 'success', icon: 'i-heroicons-check-circle' })
             setLoginSuccess(response.data)
@@ -53,7 +53,7 @@ const captchaLogin = async () => {
     if (token.value) { navigateTo('/'); return }
     loading.value = true
     try {
-        const response: ApiResponse<LoginResponse> = await usePanelApi('post', '/login/captcha', { 'body': { 'name': captchaState.name, 'captcha': captchaState.captcha } })
+        const response: ApiResponse<LoginResponse> = await usePanelApi('post', '/login/captcha', { 'body': { 'player_id': captchaState.name, 'captcha': captchaState.captcha } })
         if (response.code === 200 && response.data !== null) {
             toast.add({ title: '登录成功', description: `欢迎回到aruCraftR, ${response.data.user.name}`, color: 'success', icon: 'i-heroicons-check-circle' })
             setLoginSuccess(response.data)
@@ -76,7 +76,7 @@ const sendCaptcha = async () => {
     }
     startCooldown()
     try {
-        const response = await usePanelApi('post', '/login/send-captcha', { 'body': { 'name': captchaState.name } })
+        const response = await usePanelApi('post', '/login/send-captcha', { 'body': { 'player_id': captchaState.name } })
         if (response.code === 200) {
             toast.add({ title: '验证码已发送', color: 'success', description: '请查看服务器聊天栏以获取验证码', duration: 10000 })
         } else {
