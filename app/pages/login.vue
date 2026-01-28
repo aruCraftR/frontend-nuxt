@@ -14,23 +14,23 @@ const toast = useToast()
 const loading = ref(false)
 
 const passwordSchema = z.object({
-    player_id: z.string('请填写玩家ID'),
+    name: z.string('请填写玩家ID'),
     password: z.string('请填写密码')
 })
 type PasswordSchema = z.output<typeof passwordSchema>
 
 const captchaSchema = z.object({
-    player_id: z.string('请填写玩家ID'),
+    name: z.string('请填写玩家ID'),
     captcha: z.string('请填写验证码')
 })
 type CaptchaSchema = z.output<typeof captchaSchema>
 
 const passwordState = reactive<Partial<PasswordSchema>>({
-    player_id: undefined,
+    name: undefined,
     password: undefined
 })
 const captchaState = reactive<Partial<CaptchaSchema>>({
-    player_id: undefined,
+    name: undefined,
     captcha: undefined
 })
 
@@ -38,9 +38,9 @@ const passwordLogin = async () => {
     if (token.value) { navigateTo('/'); return }
     loading.value = true
     try {
-        const response: ApiResponse<LoginResponse> = await usePanelApi('post', '/login/password', { 'body': { 'player_id': passwordState.player_id, 'password': passwordState.password } })
+        const response: ApiResponse<LoginResponse> = await usePanelApi('post', '/login/password', { 'body': { 'name': passwordState.name, 'password': passwordState.password } })
         if (response.code === 200 && response.data !== null) {
-            toast.add({ title: '登录成功', description: `欢迎回到aruCraftR, ${response.data.user.player_id}`, color: 'success', icon: 'i-heroicons-check-circle' })
+            toast.add({ title: '登录成功', description: `欢迎回到aruCraftR, ${response.data.user.name}`, color: 'success', icon: 'i-heroicons-check-circle' })
             setLoginSuccess(response.data)
         }
     } finally {
@@ -53,9 +53,9 @@ const captchaLogin = async () => {
     if (token.value) { navigateTo('/'); return }
     loading.value = true
     try {
-        const response: ApiResponse<LoginResponse> = await usePanelApi('post', '/login/captcha', { 'body': { 'player_id': captchaState.player_id, 'captcha': captchaState.captcha } })
+        const response: ApiResponse<LoginResponse> = await usePanelApi('post', '/login/captcha', { 'body': { 'name': captchaState.name, 'captcha': captchaState.captcha } })
         if (response.code === 200 && response.data !== null) {
-            toast.add({ title: '登录成功', description: `欢迎回到aruCraftR, ${response.data.user.player_id}`, color: 'success', icon: 'i-heroicons-check-circle' })
+            toast.add({ title: '登录成功', description: `欢迎回到aruCraftR, ${response.data.user.name}`, color: 'success', icon: 'i-heroicons-check-circle' })
             setLoginSuccess(response.data)
         }
     } finally {
@@ -66,7 +66,7 @@ const captchaLogin = async () => {
 const sendCaptcha = async () => {
     if (token.value) { navigateTo('/'); return }
     loading.value = true
-    if (!captchaState.player_id) {
+    if (!captchaState.name) {
         toast.add({ title: '请输入正版ID', color: 'error' })
         return
     }
@@ -76,7 +76,7 @@ const sendCaptcha = async () => {
     }
     startCooldown()
     try {
-        const response = await usePanelApi('post', '/login/send-captcha', { 'body': { 'player_id': captchaState.player_id } })
+        const response = await usePanelApi('post', '/login/send-captcha', { 'body': { 'name': captchaState.name } })
         if (response.code === 200) {
             toast.add({ title: '验证码已发送', color: 'success', description: '请查看服务器聊天栏以获取验证码', duration: 10000 })
         } else {
@@ -107,8 +107,8 @@ const items = [
             <UTabs :items="items">
                 <template #password>
                     <UForm :schema="passwordSchema" :state="passwordState" class="space-y-4" @submit="passwordLogin">
-                        <UFormField name="player_id" class="h-13 w-full mt-5">
-                            <UInput v-model="passwordState.player_id" placeholder="请输入玩家ID" class="w-full" />
+                        <UFormField name="name" class="h-13 w-full mt-5">
+                            <UInput v-model="passwordState.name" placeholder="请输入玩家ID" class="w-full" />
                         </UFormField>
 
                         <UFormField name="password" class="h-13 w-full">
@@ -125,8 +125,8 @@ const items = [
                 </template>
                 <template #captcha>
                     <UForm :schema="captchaSchema" :state="captchaState" class="space-y-4" @submit="captchaLogin">
-                        <UFormField name="player_id" class="h-13 w-full mt-5">
-                            <UInput v-model="captchaState.player_id" placeholder="请输入玩家ID" class="w-full" />
+                        <UFormField name="name" class="h-13 w-full mt-5">
+                            <UInput v-model="captchaState.name" placeholder="请输入玩家ID" class="w-full" />
                         </UFormField>
 
                         <UFormField name="captcha" class="h-13 w-full">

@@ -120,8 +120,8 @@ const getCardMenuItems = (serverInfo: ServerInfo): ContextMenuItem[] => [
                                 <span>{{ serverInfo.player_count }} / {{ serverInfo.max_players }}</span>
                                 <div>
                                     <UAvatarGroup size="2xs" :max="3" class="ml-1">
-                                        <UAvatar v-for="player in serverInfo.players" :key="player.player_id"
-                                            :alt="player?.player_id" :src="getAvatarSrc(player)" />
+                                        <UAvatar v-for="player in serverInfo.players" :key="player.name"
+                                            :alt="player?.name" :src="getAvatarSrc(player)" />
                                     </UAvatarGroup>
                                 </div>
                             </div>
@@ -130,10 +130,9 @@ const getCardMenuItems = (serverInfo: ServerInfo): ContextMenuItem[] => [
                     </div>
                     <template #content>
                         <div v-if="serverInfo.players.length > 0" class="p-3 grid grid-cols-2 gap-2">
-                            <UUser v-for="player in serverInfo.players" :key="player.player_id"
-                                :name="player?.player_id" :avatar="{
-                                    src: getAvatarSrc(player)
-                                }" alt="Avatar" size="sm" />
+                            <UUser v-for="player in serverInfo.players" :key="player.name" :name="player?.name" :avatar="{
+                                src: getAvatarSrc(player)
+                            }" alt="Avatar" size="sm" />
                             <!-- MC头像: `https://avatars.cloudhaven.gg/avatars/${player?.uuid || '853c80ef3c3749fdaa49938b674adae6'}` -->
                         </div>
                         <div v-else class="p-3">

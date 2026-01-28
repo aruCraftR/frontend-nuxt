@@ -94,7 +94,7 @@ onMounted(() => {
                 <h2 class="text-lg font-semibold">个人资料</h2>
             </template>
             <div class="space-y-6">
-                <UUser :name="user?.player_id" :description="user?.uuid" :avatar="{
+                <UUser :name="user?.name" :description="user?.uuid" :avatar="{
                     src: `https://avatars.cloudhaven.gg/avatars/${user?.uuid || '853c80ef3c3749fdaa49938b674adae6'}`
                 }" size="3xl" />
 
@@ -116,8 +116,8 @@ onMounted(() => {
                                     @pointerleave="showOnlineSuffixPrev = false" />
                             </UFormField>
                             <template #content>
-                                {{ formState.online_qq_suffix === '' ? `${user?.player_id} | Minecraft在线` :
-                                    `${user?.player_id} ${formState.online_qq_suffix?.replaceAll('{s}', 'Minecraft')}` }}
+                                {{ formState.online_qq_suffix === '' ? `${user?.name} | Minecraft在线` :
+                                    `${user?.name} ${formState.online_qq_suffix?.replaceAll('{s}', 'Minecraft')}` }}
                             </template>
                         </UTooltip>
                         <UTooltip :delay-duration="0" :open="showOfflineSuffixPrev">
@@ -127,8 +127,8 @@ onMounted(() => {
                                     @pointerleave="showOfflineSuffixPrev = false" />
                             </UFormField>
                             <template #content>
-                                {{ formState.offline_qq_suffix === '' ? `${user?.player_id} | Minecraft离线` :
-                                    `${user?.player_id} ${formState.offline_qq_suffix?.replaceAll('{s}', 'Minecraft')}` }}
+                                {{ formState.offline_qq_suffix === '' ? `${user?.name} | Minecraft离线` :
+                                    `${user?.name} ${formState.offline_qq_suffix?.replaceAll('{s}', 'Minecraft')}` }}
                             </template>
                         </UTooltip>
                     </div>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { AccountPermission } from '~/constances'
+import { getAvatarSrc } from '~/types/api'
 import type { AsideItem } from '~/types/misc'
 
 const route = useRoute()
@@ -88,8 +89,8 @@ useHead({
                                 class="rounded-xs cursor-pointer ring-2 ring-primary-500 ring-offset-2 dark:ring-offset-gray-900" />
                             <template #content>
                                 <div class="p-2 w-48">
-                                    <UUser class="ml-1" :name="user?.player_id" :description="user?.qq_id" :avatar="{
-                                        src: `https://avatars.cloudhaven.gg/avatars/${user?.uuid || '853c80ef3c3749fdaa49938b674adae6'}`
+                                    <UUser class="ml-1" :name="user?.name" :avatar="{
+                                        src: getAvatarSrc(user)
                                     }" size="sm" />
                                     <USeparator class="mt-2 mb-1" />
                                     <UButton to="/player" variant="ghost" color="neutral" icon="i-heroicons-user" block

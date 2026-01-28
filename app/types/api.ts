@@ -24,7 +24,7 @@ export interface QQAvatarInfo {
 }
 
 export interface PlayerInfo {
-    player_id: string;
+    name: string;
     uuid: string;
     avatar: MinecraftSkinAvatarInfo | QQAvatarInfo
 }
