@@ -20,10 +20,9 @@ const { user } = useAuth()
 
       <UPageGrid class="gap-5">
 
-        <NavStrip title="官网" to="https://www.arucraftr.org" tooltip="查看官方组件库文档" icon="i-heroicons-home"
-          color="primary" />
+        <NavStrip title="官网" to="https://www.arucraftr.org" icon="i-heroicons-home" color="primary" />
 
-        <NavStrip title="在线列表" to="/online" tooltip="查看官方组件库文档" icon="i-heroicons-server-stack" color="success" />
+        <NavStrip title="在线列表" to="/online" icon="i-heroicons-server-stack" color="success" />
 
         <NavStrip title="服务状态监控" to="https://status.arucraftr.org" tooltip="查看各服务在线状态" icon="i-heroicons-bug-ant"
           color="error" />
