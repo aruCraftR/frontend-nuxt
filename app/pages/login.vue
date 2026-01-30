@@ -99,7 +99,7 @@ const items = [
 <template>
     <UContainer
         class="relative flex items-center justify-center overflow-hidden min-h-[calc(100vh-var(--ui-header-height))]">
-        <UCard class="box-border min-w-80 w-1/4 bg-accented">
+        <UCard class="box-border w-1/2 min-w-80 max-w-md bg-accented">
             <template #header>
                 aruCraftR玩家面板
             </template>

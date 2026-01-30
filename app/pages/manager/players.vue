@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import type { DropdownMenuItem, SelectItem, TableColumn } from '@nuxt/ui';
 import { AccountPermission } from '~/constances';
-import type { ApiResponse } from '~/types/api';
+import type { ApiResponse, PlayerSocialAccounts } from '~/types/api';
 import type { Colors } from "~/types/misc"
 
 definePageMeta({
@@ -19,7 +19,7 @@ type PlayerTabelItem = {
   uuid: string
   permission: AccountPermission
   is_bound: boolean
-  qq_id?: number
+  social_accounts: PlayerSocialAccounts
   mc_id: string
   last_online_date?: string
   last_online_server?: string
@@ -205,8 +205,8 @@ async function changePermission(item: PlayerTabelItem) {
 
 <template>
   <div class="flex justify-center">
-    <DatabaseTable class="w-full h-full" :columns="playerTabelColumns" :data="tableData" :center-headers="true"
-      :page-size="pageSize" :server-total="totalItems" :loading="isLoading" @change="fetchData">
+    <DatabaseTable class="w-full h-full" :columns="playerTabelColumns" :data="tableData" :page-size="pageSize"
+      :server-total="totalItems" :loading="isLoading" @change="fetchData">
       <template #expanded="{ row }">
         <pre>{{ row.original }}</pre>
       </template>
@@ -231,9 +231,10 @@ async function changePermission(item: PlayerTabelItem) {
             '已绑定' : '未绑定' }}</span>
       </template>
       <template #qq_id-cell="{ row }">
-        <UUser v-if="row.original.qq_id" :name="String(row.original.qq_id)" :avatar="{
-          src: `https://q1.qlogo.cn/g?b=qq&nk=${row.original.qq_id || 0}&s=40`
-        }" alt="Avatar" size="sm" />
+        <UUser v-if="row.original.social_accounts.qq !== undefined" :name="String(row.original.social_accounts.qq)"
+          :avatar="{
+            src: `https://q1.qlogo.cn/g?b=qq&nk=${row.original.social_accounts.qq || 0}&s=40`
+          }" alt="Avatar" size="sm" />
       </template>
       <template #action-cell="{ row }">
         <UDropdownMenu :items="getDropdownActions(row.original)">

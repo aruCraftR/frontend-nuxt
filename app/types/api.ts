@@ -65,6 +65,12 @@ export interface PlayerProfile {
     avatar_source: 'mc_skin' | 'qq'
 }
 
+export interface ServerPlayHistory {
+    player: PlayerInfo;
+    online_date: string;
+    total_time: number;
+}
+
 export function getAvatarSrc(player: PlayerInfo) {
     switch (player.avatar.source) {
         case 'mc_skin': return `https://avatars.cloudhaven.gg/avatars/${player.uuid || '853c80ef3c3749fdaa49938b674adae6'}`;

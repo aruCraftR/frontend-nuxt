@@ -1,13 +1,14 @@
 <script setup lang="ts">
+import type { TableColumn } from '@nuxt/ui';
 import { AccountPermission } from '~/constances';
-import { getAvatarSrc, type ServerInfo, type ServerProfile } from '~/types/api';
+import { getAvatarSrc, type ApiResponse, type ServerInfo, type ServerPlayHistory, type ServerProfile } from '~/types/api';
 import type { Colors } from '~/types/misc';
-
+import humanizeDuration from 'humanize-duration';
 
 const props = defineProps<{
     serverInfo: ServerInfo
 }>()
-
+const { usePanelApi } = useApi()
 const { user } = useAuth()
 const { useServerProfileEditor } = useEditor()
 const { serverProfiles } = useData()
@@ -89,6 +90,72 @@ const getCardMenuItems = (serverInfo: ServerInfo): ContextMenuItem[] => [
     )
 ].filter(Boolean)
 
+
+type PlayHistoryTabelApiData = {
+    items: ServerPlayHistory[]
+    total: number
+}
+
+const playHistoryTabelColumns: TableColumn<ServerPlayHistory>[] = [
+    {
+        accessorKey: 'mcId',
+        header: '玩家名',
+    },
+    {
+        accessorKey: 'lastOnlineDate',
+        header: '最近上线时间',
+        cell: ({ row }) => {
+            return new Date(row.original.online_date).toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            })
+        }
+    },
+    {
+        accessorKey: 'totalTime',
+        header: '总在线时长',
+        cell: ({ row }) => {
+            return humanizeDuration(row.original.total_time * 1000, {
+                units: ['h', 'm'],
+                language: 'zh_CN',
+                round: true,
+                delimiter: ' ',
+                spacer: ''
+            })
+        }
+    },
+]
+
+const playHistoryEmptyText = ref('加载中')
+const playHistoryData: Ref<ServerPlayHistory[]> = ref([])
+const loadingPlayHistory = ref(true)
+const playHistoryPageSize = 8
+const totalPlayHistory = ref(0)
+
+const fetchPlayHistory = async (page: number) => {
+    loadingPlayHistory.value = true
+    playHistoryEmptyText.value = '加载中'
+    try {
+        const response: ApiResponse<PlayHistoryTabelApiData> = await usePanelApi('get', `/servers/${serverProfile.value?.server_id}/plays`, {
+            'query': {
+                'page': page,
+                'page_size': playHistoryPageSize
+            }
+        })
+        if (response.data !== null) {
+            playHistoryData.value = response.data.items
+            totalPlayHistory.value = response.data.total
+        }
+    } finally {
+        loadingPlayHistory.value = false
+        playHistoryEmptyText.value = '没有记录呢'
+    }
+}
+
 </script>
 
 <template>
@@ -144,8 +211,26 @@ const getCardMenuItems = (serverInfo: ServerInfo): ContextMenuItem[] => [
                 <UProgress size="xs" :color="statusColors.get(serverInfo.status) || 'neutral'" />
 
                 <div class="mt-4 flex gap-2">
-                    <UButton block variant="soft" :disabled="serverInfo.status !== 'active'"
-                        @click="toast.add({ title: '聊天功能正在开发中', color: 'neutral' })">进入聊天</UButton>
+                    <UModal description="每页内暂不保证排序准确" :ui="{ content: 'max-w-3xl' }"
+                        :title="`${serverProfile?.zh_cn_name || serverProfile?.en_ww_name} 最近上线记录`">
+                        <UButton block variant="soft">上线记录
+                        </UButton>
+                        <template #body>
+                            <DatabaseTable :empty="playHistoryEmptyText" :loading="loadingPlayHistory"
+                                :columns="playHistoryTabelColumns" :data="playHistoryData"
+                                :page-size="playHistoryPageSize" :server-total="totalPlayHistory"
+                                @change="fetchPlayHistory">
+                                <template #mcId-cell="{ row }">
+                                    <UUser :name="row.original.player.name" :avatar="{
+                                        src: getAvatarSrc(row.original.player)
+                                    }" size="md" />
+                                </template>
+                            </DatabaseTable>
+                        </template>
+                    </UModal>
+                    <UButton block color="neutral" disabled variant="soft"
+                        @click="toast.add({ title: '聊天功能正在开发中', color: 'neutral' })">
+                        进入聊天</UButton>
                 </div>
             </div>
         </UCard>

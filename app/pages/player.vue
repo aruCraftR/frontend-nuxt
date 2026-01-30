@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SelectItem } from '@nuxt/ui'
 import * as z from 'zod'
 import { AccountPermission } from '~/constances'
 import type { ApiResponse, PlayerProfile } from '~/types/api'
@@ -10,16 +11,16 @@ definePageMeta({
 const { user, userLogout } = useAuth()
 const { usePanelApi } = useApi()
 const toast = useToast()
-const loading = ref(true)
-const qqId: Ref<string | undefined> = ref(undefined)
+const patching = ref(false)
+const playerProfile: Ref<PlayerProfile | undefined> = ref(undefined)
 const showOnlineSuffixPrev = ref(false)
 const showOfflineSuffixPrev = ref(false)
-let oldProfile: PlayerProfile | null = null
 
 const formSchema = z.object({
     password: z.string('请填写密码').min(8, '密码必须超过8位').optional(),
     online_qq_suffix: z.string().optional(),
     offline_qq_suffix: z.string().optional(),
+    avatar_source: z.enum(['qq', 'mc_skin'])
 })
 type FormSchema = z.output<typeof formSchema>
 
@@ -27,10 +28,22 @@ const formState = reactive<Partial<FormSchema>>({
     password: undefined,
     online_qq_suffix: '',
     offline_qq_suffix: '',
+    avatar_source: 'qq',
 })
 
+const avatarSourceItems = ref<SelectItem[]>([
+    {
+        label: 'MC皮肤',
+        value: 'mc_skin'
+    },
+    {
+        label: 'QQ头像',
+        value: 'qq'
+    },
+])
+
 const saveProfile = async () => {
-    loading.value = true
+    patching.value = true
     if (formState.password) {
         if (formState.password.length <= 8) {
             toast.add({ title: '密码必须超过8位', color: 'warning' })
@@ -47,6 +60,7 @@ const saveProfile = async () => {
         }
     }
     const updatedProfile: Record<string, string> = {}
+    const oldProfile = playerProfile.value
     if (formState.online_qq_suffix !== undefined && formState.online_qq_suffix != oldProfile?.online_qq_suffix) {
         updatedProfile.online_qq_suffix = formState.online_qq_suffix
         if (oldProfile) oldProfile.online_qq_suffix = formState.online_qq_suffix
@@ -54,6 +68,10 @@ const saveProfile = async () => {
     if (formState.offline_qq_suffix !== undefined && formState.offline_qq_suffix != oldProfile?.offline_qq_suffix) {
         updatedProfile.offline_qq_suffix = formState.offline_qq_suffix
         if (oldProfile) oldProfile.offline_qq_suffix = formState.offline_qq_suffix
+    }
+    if (formState.avatar_source !== undefined && formState.avatar_source != oldProfile?.avatar_source) {
+        updatedProfile.avatar_source = formState.avatar_source
+        if (oldProfile) oldProfile.avatar_source = formState.avatar_source
     }
     if (Object.keys(updatedProfile).length !== 0) {
         try {
@@ -65,23 +83,21 @@ const saveProfile = async () => {
             toast.add({ description: '个人设置更新失败', color: 'error' })
         }
     }
-    loading.value = false
+    patching.value = false
 }
 
 const loadProfile = async () => {
-    loading.value = true
+    playerProfile.value = undefined
     const response: ApiResponse<PlayerProfile> = await usePanelApi('get', '/players/me/profile')
     if (response.code === 200) {
-        oldProfile = response.data
+        formState.avatar_source = response.data?.avatar_source
         formState.online_qq_suffix = response.data?.online_qq_suffix
         formState.offline_qq_suffix = response.data?.offline_qq_suffix
-        loading.value = false
-        qqId.value = response.data?.social_accounts.qq
+        playerProfile.value = response.data === null ? undefined : response.data
     }
 }
 
 onMounted(() => {
-    loading.value = true
     loadProfile()
 })
 
@@ -98,17 +114,20 @@ onMounted(() => {
                     src: `https://avatars.cloudhaven.gg/avatars/${user?.uuid || '853c80ef3c3749fdaa49938b674adae6'}`
                 }" size="3xl" />
 
-                <UForm :schema="formSchema" :state="formState" class="space-y-4" :disabled="loading">
+                <USkeleton v-if="playerProfile === undefined" class="h-32 flex items-center justify-center">
+                    <UBadge size="xl" class="justify-center" variant="soft">加载中...</UBadge>
+                </USkeleton>
+                <UForm v-else :schema="formSchema" :state="formState" class="space-y-4" :disabled="patching">
                     <div class="flex space-x-6">
-                        <UFormField v-if="qqId !== undefined" label="绑定QQ">
-                            <UInput :model-value="qqId" disabled />
-                        </UFormField>
-                        <UFormField label="更改密码" name="password">
-                            <UInput v-model="formState.password" placeholder="若不需要更改密码可留空" type="password" />
+                        <UFormField label="头像来源偏好" name="avatar_source">
+                            <USelect v-model="formState.avatar_source" :items="avatarSourceItems" />
                         </UFormField>
                     </div>
-                    <div v-if="formState.online_qq_suffix !== undefined && formState.offline_qq_suffix !== undefined"
+                    <div v-if="playerProfile.social_accounts.qq !== undefined && formState.online_qq_suffix !== undefined && formState.offline_qq_suffix !== undefined"
                         class="flex space-x-6">
+                        <UFormField label="绑定QQ">
+                            <UInput :model-value="playerProfile.social_accounts.qq" disabled />
+                        </UFormField>
                         <UTooltip :delay-duration="0" :open="showOnlineSuffixPrev">
                             <UFormField label="在线QQ后缀" name="online_qq_suffix">
                                 <UInput v-model="formState.online_qq_suffix" placeholder="| {s}在线"
@@ -132,9 +151,14 @@ onMounted(() => {
                             </template>
                         </UTooltip>
                     </div>
+                    <div class="flex space-x-6">
+                        <UFormField label="更改密码" name="password">
+                            <UInput v-model="formState.password" placeholder="若不需要更改密码可留空" type="password" />
+                        </UFormField>
+                    </div>
 
                     <div class="flex justify-end">
-                        <UButton :disabled="loading" @click="saveProfile">保存更改</UButton>
+                        <UButton :disabled="patching" @click="saveProfile">保存更改</UButton>
                     </div>
                 </UForm>
             </div>
