@@ -211,7 +211,7 @@ const fetchPlayHistory = async (page: number) => {
                 <UProgress size="xs" :color="statusColors.get(serverInfo.status) || 'neutral'" />
 
                 <div class="mt-4 flex gap-2">
-                    <UModal description="每页内暂不保证排序准确" :ui="{ content: 'max-w-3xl' }"
+                    <UModal description="按最近上线时间排序" :ui="{ content: 'max-w-3xl' }"
                         :title="`${serverProfile?.zh_cn_name || serverProfile?.en_ww_name} 最近上线记录`">
                         <UButton block variant="soft">上线记录
                         </UButton>
