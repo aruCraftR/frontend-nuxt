@@ -1,164 +1,262 @@
 <script setup lang="ts">
-import * as z from 'zod'
-import { AccountPermission } from '~/constances'
-import type { ApiResponse, LoginResponse } from '~/types/api'
+import * as z from 'zod';
+
 definePageMeta({
     layout: 'empty',
     title: '登录 - aruCraftR',
     permission: AccountPermission.USER,
-})
+});
 
-const { startCooldown, cooldown, setLoginSuccess, token } = useAuth()
-const { usePanelApi } = useApi()
-const toast = useToast()
-const loading = ref(false)
+const { usePanelApi } = useApi();
+const { startCooldown, cooldown, setLoginSuccess, token } = useAuth();
+const toast = useToast();
+const loading = ref(false);
 
 const passwordSchema = z.object({
     name: z.string('请填写玩家ID'),
-    password: z.string('请填写密码')
-})
-type PasswordSchema = z.output<typeof passwordSchema>
+    password: z.string('请填写密码'),
+});
+type PasswordSchema = z.output<typeof passwordSchema>;
 
 const captchaSchema = z.object({
     name: z.string('请填写玩家ID'),
-    captcha: z.string('请填写验证码')
-})
-type CaptchaSchema = z.output<typeof captchaSchema>
+    captcha: z.string('请填写验证码'),
+});
+type CaptchaSchema = z.output<typeof captchaSchema>;
 
 const passwordState = reactive<Partial<PasswordSchema>>({
     name: undefined,
-    password: undefined
-})
+    password: undefined,
+});
 const captchaState = reactive<Partial<CaptchaSchema>>({
     name: undefined,
-    captcha: undefined
-})
+    captcha: undefined,
+});
 
 const passwordLogin = async () => {
-    if (token.value) { navigateTo('/'); return }
-    loading.value = true
+    if (token.value) {
+        navigateTo('/');
+        return;
+    }
+    loading.value = true;
     try {
-        const response: ApiResponse<LoginResponse> = await usePanelApi('post', '/login/password', { 'body': { 'player_id': passwordState.name, 'password': passwordState.password } })
+        const response: ApiResponse<LoginResponse> = await usePanelApi(
+            'post',
+            '/login/password',
+            {
+                body: {
+                    player_id: passwordState.name,
+                    password: passwordState.password,
+                },
+            },
+        );
         if (response.code === 200 && response.data !== null) {
-            toast.add({ title: '登录成功', description: `欢迎回到aruCraftR, ${response.data.user.name}`, color: 'success', icon: 'i-heroicons-check-circle' })
-            setLoginSuccess(response.data)
+            toast.add({
+                title: '登录成功',
+                description: `欢迎回到aruCraftR, ${response.data.user.name}`,
+                color: 'success',
+                icon: 'i-heroicons-check-circle',
+            });
+            setLoginSuccess(response.data);
         }
     } finally {
-        loading.value = false
+        loading.value = false;
     }
-}
-
+};
 
 const captchaLogin = async () => {
-    if (token.value) { navigateTo('/'); return }
-    loading.value = true
+    if (token.value) {
+        navigateTo('/');
+        return;
+    }
+    loading.value = true;
     try {
-        const response: ApiResponse<LoginResponse> = await usePanelApi('post', '/login/captcha', { 'body': { 'player_id': captchaState.name, 'captcha': captchaState.captcha } })
+        const response: ApiResponse<LoginResponse> = await usePanelApi(
+            'post',
+            '/login/captcha',
+            {
+                body: {
+                    player_id: captchaState.name,
+                    captcha: captchaState.captcha,
+                },
+            },
+        );
         if (response.code === 200 && response.data !== null) {
-            toast.add({ title: '登录成功', description: `欢迎回到aruCraftR, ${response.data.user.name}`, color: 'success', icon: 'i-heroicons-check-circle' })
-            setLoginSuccess(response.data)
+            toast.add({
+                title: '登录成功',
+                description: `欢迎回到aruCraftR, ${response.data.user.name}`,
+                color: 'success',
+                icon: 'i-heroicons-check-circle',
+            });
+            setLoginSuccess(response.data);
         }
     } finally {
-        loading.value = false
+        loading.value = false;
     }
-}
+};
 
 const sendCaptcha = async () => {
-    if (token.value) { navigateTo('/'); return }
-    loading.value = true
+    if (token.value) {
+        navigateTo('/');
+        return;
+    }
+    loading.value = true;
     if (!captchaState.name) {
-        toast.add({ title: '请输入正版ID', color: 'error' })
-        return
+        toast.add({ title: '请输入正版ID', color: 'error' });
+        return;
     }
     if (cooldown.value > 0) {
-        toast.add({ title: '请勿频繁发送验证码', color: 'warning' })
-        return
+        toast.add({ title: '请勿频繁发送验证码', color: 'warning' });
+        return;
     }
-    startCooldown()
+    startCooldown();
     try {
-        const response = await usePanelApi('post', '/login/send-captcha', { 'body': { 'player_id': captchaState.name } })
+        const response = await usePanelApi('post', '/login/send-captcha', {
+            body: { player_id: captchaState.name },
+        });
         if (response.code === 200) {
-            toast.add({ title: '验证码已发送', color: 'success', description: '请查看服务器聊天栏以获取验证码', duration: 10000 })
+            toast.add({
+                title: '验证码已发送',
+                color: 'success',
+                description: '请查看服务器聊天栏以获取验证码',
+                duration: 10000,
+            });
         } else {
-            cooldown.value = 5
+            cooldown.value = 5;
         }
     } catch {
-        cooldown.value = 5
+        cooldown.value = 5;
     } finally {
-        loading.value = false
+        loading.value = false;
     }
-}
-
+};
 
 const items = [
     { slot: 'password', label: '密码登录' },
-    { slot: 'captcha', label: '验证码登录' }
-]
+    { slot: 'captcha', label: '验证码登录' },
+];
 </script>
 
 <template>
     <UContainer
-        class="relative flex items-center justify-center overflow-hidden min-h-[calc(100vh-var(--ui-header-height))]">
+        class="relative flex items-center justify-center overflow-hidden min-h-[calc(100vh-var(--ui-header-height))]"
+    >
         <UCard class="box-border w-1/2 min-w-80 max-w-md bg-accented">
-            <template #header>
-                aruCraftR玩家面板
-            </template>
+            <template #header> aruCraftR玩家面板 </template>
 
             <UTabs :items="items">
                 <template #password>
-                    <UForm :schema="passwordSchema" :state="passwordState" class="space-y-4" @submit="passwordLogin">
-                        <UFormField name="name" class="h-13 w-full mt-5">
-                            <UInput v-model="passwordState.name" placeholder="请输入玩家ID" class="w-full" />
+                    <UForm
+                        :schema="passwordSchema"
+                        :state="passwordState"
+                        class="space-y-4"
+                        @submit="passwordLogin"
+                    >
+                        <UFormField
+                            name="name"
+                            class="h-13 w-full mt-5"
+                        >
+                            <UInput
+                                v-model="passwordState.name"
+                                placeholder="请输入玩家ID"
+                                class="w-full"
+                            />
                         </UFormField>
 
-                        <UFormField name="password" class="h-13 w-full">
-                            <UInput v-model="passwordState.password" placeholder="请输入密码" type="password"
-                                class="w-full" />
+                        <UFormField
+                            name="password"
+                            class="h-13 w-full"
+                        >
+                            <UInput
+                                v-model="passwordState.password"
+                                placeholder="请输入密码"
+                                type="password"
+                                class="w-full"
+                            />
                         </UFormField>
 
-                        <UButton :disabled="loading || Boolean(token)" type="submit"
-                            class="w-full justify-center items-center">
+                        <UButton
+                            :disabled="loading || Boolean(token)"
+                            type="submit"
+                            class="w-full justify-center items-center"
+                        >
                             登录
                         </UButton>
                     </UForm>
-
                 </template>
                 <template #captcha>
-                    <UForm :schema="captchaSchema" :state="captchaState" class="space-y-4" @submit="captchaLogin">
-                        <UFormField name="name" class="h-13 w-full mt-5">
-                            <UInput v-model="captchaState.name" placeholder="请输入玩家ID" class="w-full" />
+                    <UForm
+                        :schema="captchaSchema"
+                        :state="captchaState"
+                        class="space-y-4"
+                        @submit="captchaLogin"
+                    >
+                        <UFormField
+                            name="name"
+                            class="h-13 w-full mt-5"
+                        >
+                            <UInput
+                                v-model="captchaState.name"
+                                placeholder="请输入玩家ID"
+                                class="w-full"
+                            />
                         </UFormField>
 
-                        <UFormField name="captcha" class="h-13 w-full">
+                        <UFormField
+                            name="captcha"
+                            class="h-13 w-full"
+                        >
                             <div class="flex w-full">
-                                <UInput v-model="captchaState.captcha" placeholder="请输入验证码" type="captcha"
-                                    class="flex-1" />
-                                <UButton type="button" class="ml-1 min-w-1/3 justify-center" name='send_captcha'
-                                    :disabled="cooldown > 0" @click="sendCaptcha">
-                                    {{ cooldown > 0 ? `${cooldown}s 后可重发` : '获取验证码' }}
+                                <UInput
+                                    v-model="captchaState.captcha"
+                                    placeholder="请输入验证码"
+                                    type="captcha"
+                                    class="flex-1"
+                                />
+                                <UButton
+                                    type="button"
+                                    class="ml-1 min-w-1/3 justify-center"
+                                    name="send_captcha"
+                                    :disabled="cooldown > 0"
+                                    @click="sendCaptcha"
+                                >
+                                    {{
+                                        cooldown > 0
+                                            ? `${cooldown}s 后可重发`
+                                            : '获取验证码'
+                                    }}
                                 </UButton>
                             </div>
                         </UFormField>
 
-                        <UButton :disabled="loading || Boolean(token)" type="submit"
-                            class="w-full justify-center items-center">
+                        <UButton
+                            :disabled="loading || Boolean(token)"
+                            type="submit"
+                            class="w-full justify-center items-center"
+                        >
                             验证并登录
                         </UButton>
                     </UForm>
-
                 </template>
             </UTabs>
 
             <template #footer>
                 <UContainer class="flex justify-between">
-                    <UModal title="如何注册账户" close>
+                    <UModal
+                        title="如何注册账户"
+                        close
+                    >
                         <UButton variant="link">注册账户</UButton>
                         <template #body>
                             在QQ群内绑定正版ID后自动完成注册
-                            首次登录只能使用验证码登录(需要在服务器内上线), 登录后即可进入玩家设置修改密码
+                            首次登录只能使用验证码登录(需要在服务器内上线),
+                            登录后即可进入玩家设置修改密码
                         </template>
                     </UModal>
-                    <UModal title="忘记密码怎么办" close>
+                    <UModal
+                        title="忘记密码怎么办"
+                        close
+                    >
                         <UButton variant="link">忘记密码</UButton>
                         <template #body>
                             可使用验证码登录, 随后前往玩家设置更改密码

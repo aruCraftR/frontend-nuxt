@@ -1,8 +1,10 @@
 <script setup lang="ts">
-const route = useRoute()
+const route = useRoute();
 useHead({
-    meta: [{ property: 'og:title', content: `aruCraftR - ${route.meta.title}` }],
-})
+    meta: [
+        { property: 'og:title', content: `aruCraftR - ${route.meta.title}` },
+    ],
+});
 </script>
 
 <template>
@@ -16,10 +18,22 @@ useHead({
             </template>
 
             <template #right>
-                <UButton icon="i-simple-icons-qq" color="neutral" variant="ghost" to="https://re.arucraftr.org"
-                    target="_blank" aria-label="QQ" />
-                <UButton icon="i-simple-icons-statuspage" color="neutral" variant="ghost"
-                    to="https://status.arucraftr.org" target="_blank" aria-label="Status Page" />
+                <UButton
+                    icon="i-simple-icons-qq"
+                    color="neutral"
+                    variant="ghost"
+                    to="https://re.arucraftr.org"
+                    target="_blank"
+                    aria-label="QQ"
+                />
+                <UButton
+                    icon="i-simple-icons-statuspage"
+                    color="neutral"
+                    variant="ghost"
+                    to="https://status.arucraftr.org"
+                    target="_blank"
+                    aria-label="Status Page"
+                />
             </template>
         </UFooter>
     </div>

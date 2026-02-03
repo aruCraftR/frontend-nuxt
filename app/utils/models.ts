@@ -1,7 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// types/api.d.ts
 
-import type { AccountPermission } from "~/constances";
+export type Colors = 'neutral' | 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'error'
+export type AsideItem = 'sep' | AsideLink
+export type ServerStatus = 'active' | 'starting' | 'stopping' | 'stopped' | 'unresponsive'
+export type HTTPMethod = 'get' | 'post' | 'head' | 'patch' | 'put' | 'delete' | 'connect' | 'options' | 'trace';
+
+export interface AsideLink {
+    label: string,
+    icon: string,
+    to: string,
+    color?: Colors,
+}
 
 export interface ApiResponse<T = any> {
     code: number;
@@ -33,7 +42,6 @@ export interface AuthedPlayerInfo extends PlayerInfo {
     permission: AccountPermission;
 }
 
-type ServerStatus = 'active' | 'starting' | 'stopping' | 'stopped' | 'unresponsive'
 
 export interface ServerInfo {
     id: string
@@ -69,11 +77,4 @@ export interface ServerPlayHistory {
     player: PlayerInfo;
     online_date: string;
     total_time: number;
-}
-
-export function getAvatarSrc(player: PlayerInfo) {
-    switch (player.avatar.source) {
-        case 'mc_skin': return `https://avatars.cloudhaven.gg/avatars/${player.uuid || '853c80ef3c3749fdaa49938b674adae6'}`;
-        case 'qq': return `https://q1.qlogo.cn/g?b=qq&nk=${player.avatar.qq_id}&s=140`;
-    }
 }

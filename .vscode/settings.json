@@ -2,5 +2,16 @@
     "typescript.tsdk": "node_modules\\typescript\\lib",
     "files.associations": {
         "*.css": "tailwindcss"
+    },
+    "editor.tabSize": 4,
+    "[vue]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     }
 }

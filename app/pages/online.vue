@@ -1,41 +1,45 @@
 <!-- pages/online.vue -->
 <script setup lang="ts">
-import type { ApiResponse, ServerInfo } from '~/types/api'
-import type { FetchError } from 'ofetch'
-import { AccountPermission } from '~/constances'
-
+import type { FetchError } from 'ofetch';
 
 definePageMeta({
     title: '服务器列表',
     permission: AccountPermission.USER,
-})
+});
 
-const { serverList, lastFetchServerListTimestamp, isServerListLoaded } = useUi()
-const { checkServerProfiles } = useData()
-const { user } = useAuth()
-const { usePanelApi } = useApi()
-const { useServerProfileEditor } = useEditor()
+const { usePanelApi } = useApi();
+const store = useLocalStore();
+const cache = useCacheStore();
+const { user } = useAuth();
+const { useServerProfileEditor } = useEditor();
 let isPageActivated = false;
 let catched401 = false;
 let timer: number;
 
-
-const updateServers = async () => {
-    if (!isPageActivated) return
-    const now = Date.now()
-    if (now - lastFetchServerListTimestamp.value <= 5) return
-    lastFetchServerListTimestamp.value = now
-    catched401 = false
+async function updateServers() {
+    if (!isPageActivated) return;
+    const now = Date.now();
+    if (now - cache.lastFetchServerListTs <= 5) return;
+    cache.lastFetchServerListTs = now;
+    catched401 = false;
     try {
-        const response: ApiResponse<ServerInfo[]> = await usePanelApi('get', '/servers/status')
+        const response: ApiResponse<ServerInfo[]> = await usePanelApi(
+            'get',
+            '/servers/status',
+        );
         if (response.data !== null) {
-            serverList.value = await checkServerProfiles(response.data)
-            isServerListLoaded.value = true
+            cache.serverList = await store.checkServerProfiles(response.data);
+            cache.isServerListLoaded = true;
         }
-    } catch (error) {
-        if ((error as FetchError).response?.status === 401) {
-            catched401 = true
+    } catch (error: any) {
+        if (
+            error.name === 'FetchError' &&
+            (error as FetchError).response?.status === 401
+        ) {
+            catched401 = true;
+            return;
         }
+        console.error(error);
     } finally {
         if (isPageActivated && !catched401) {
             timer = setTimeout(updateServers, 20000);
@@ -43,41 +47,67 @@ const updateServers = async () => {
     }
 }
 
-
 onMounted(() => {
-    isPageActivated = true
-    updateServers()
-})
+    isPageActivated = true;
+    updateServers();
+});
 
 onUnmounted(() => {
-    isPageActivated = false
-    clearTimeout(timer)
-})
-
+    isPageActivated = false;
+    clearTimeout(timer);
+});
 
 const createServerProfile = async () => {
-    if (!user.value || user.value.permission < AccountPermission.ADMIN) return
-    await useServerProfileEditor()
-}
-
+    if (!user.value || user.value.permission < AccountPermission.ADMIN) return;
+    await useServerProfileEditor();
+};
 </script>
 
 <template>
-    <UPageHero v-if="!isServerListLoaded" headline="稍安勿躁哦" title="正在获取服务器列表" description="CloudFlare在国内的访问速度可能偏慢" />
-    <div v-else-if="serverList.length > 0" class="space-y-5">
-        <UBanner title="点击对应卡片可查看玩家列表" icon="i-lucide-info" class="rounded-xl" color="primary" />
+    <UPageHero
+        v-if="!cache.isServerListLoaded"
+        headline="稍安勿躁哦"
+        title="正在获取服务器列表"
+        description="CloudFlare在国内的访问速度可能偏慢"
+    />
+    <div
+        v-else-if="cache.serverList.length > 0"
+        class="space-y-5"
+    >
+        <UBanner
+            title="点击对应卡片可查看玩家列表"
+            icon="i-lucide-info"
+            class="rounded-xl"
+            color="primary"
+        />
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-            <ServerInfoCard v-for="server in serverList" :key="server.id" :server-info="server" />
-            <UCard v-if="user && user.permission >= AccountPermission.ADMIN"
-                class="hover:scale-105 transition-scale duration-200 p-0" @click="createServerProfile()">
+            <ServerInfoCard
+                v-for="server in cache.serverList"
+                :key="server.id"
+                :server-info="server"
+            />
+            <UCard
+                v-if="user && user.permission >= AccountPermission.ADMIN"
+                class="hover:scale-105 transition-scale duration-200 p-0"
+                @click="createServerProfile()"
+            >
                 <div class="my-10">
-                    <UIcon name="i-heroicons-squares-plus" class="size-10 justify-center w-full text-neutral-500" />
-                    <p class="w-full text-center text-neutral-500">添加服务器</p>
+                    <UIcon
+                        name="i-heroicons-squares-plus"
+                        class="size-10 justify-center w-full text-neutral-500"
+                    />
+                    <p class="w-full text-center text-neutral-500">
+                        添加服务器
+                    </p>
                 </div>
             </UCard>
         </div>
     </div>
-    <UPageHero v-else-if="serverList.length == 0" headline="啊嘞?" title="没有服务器在线" description="或许有什么特殊状况?"
-        @click="createServerProfile" />
-
+    <UPageHero
+        v-else-if="cache.serverList.length == 0"
+        headline="啊嘞?"
+        title="没有服务器在线"
+        description="或许有什么特殊状况?"
+        @click="createServerProfile"
+    />
 </template>

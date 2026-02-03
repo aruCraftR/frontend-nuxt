@@ -25,6 +25,7 @@
     "eslint": "^9.39.1",
     "humanize-duration": "^3.33.2",
     "nuxt": "^4.2.1",
+    "pinia-plugin-persistedstate": "^4.7.1",
     "typescript": "^5.9.3",
     "vue": "^3.5.25",
     "vue-router": "^4.6.3",
@@ -32,7 +33,11 @@
   },
   "devDependencies": {
     "@iconify-json/heroicons": "^1.2.3",
+    "@iconify-json/lucide": "^1.2.87",
+    "@iconify-json/simple-icons": "^1.2.69",
     "@types/humanize-duration": "^3.27.4",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.1",
     "stylelint-config-tailwindcss": "^1.0.0"
   }
 }
