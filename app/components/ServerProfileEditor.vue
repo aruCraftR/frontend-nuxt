@@ -53,15 +53,29 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
 }
 
 const getMcVersions = async () => {
-    if (!cache.mcVersionList.length) {
-        const res: { result: string[] } = await useExternalApi(
-            'https://mc-versions-api.net',
+    const releaseList = cache.mcReleaseList;
+    const snapshotList = cache.mcSnapshotList;
+    if (!cache.mcReleaseList.length || !cache.mcSnapshotList.length) {
+        const res: MinecraftVersionManifest = await useExternalApi(
+            'https://launchermeta.mojang.com',
             'get',
-            '/api/java',
+            '/mc/game/version_manifest.json',
         );
-        cache.mcVersionList = res.result;
+        for (const versionInfo of res.versions) {
+            if (versionInfo.type === 'release') {
+                releaseList.push(versionInfo.id);
+            }
+            if (versionInfo.type === 'snapshot') {
+                snapshotList.push(versionInfo.id);
+            }
+        }
+        cache.mcReleaseList = releaseList;
+        cache.mcSnapshotList = snapshotList;
     }
-    return cache.mcVersionList;
+    return {
+        releaseList,
+        snapshotList,
+    };
 };
 </script>
 
@@ -154,7 +168,7 @@ const getMcVersions = async () => {
                             @vue:mounted="getMcVersions()"
                             color="neutral"
                             variant="soft"
-                            :items="cache.mcVersionList"
+                            :items="cache.mcReleaseList"
                             class="w-full"
                         />
                     </UFormField>

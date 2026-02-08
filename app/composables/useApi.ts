@@ -94,20 +94,41 @@ export function useApi() {
         });
     };
 
-    const useExternalApi = <T>(
-        base: string,
+    async function useExternalApi<T>(
+        base: string | string[],
         method: HTTPMethod,
-        url: string,
+        path: string,
         body?: Record<string, any>,
         bearer?: string,
         options: any = {},
-    ) => {
+    ) {
         const headers: Record<string, string> = {};
         if (bearer) {
             headers.Authorization = `Bearer ${bearer}`;
         }
+        if (typeof base !== 'string') {
+            let lastError = undefined;
+            for (const i of base) {
+                console.log(i);
+                try {
+                    return await useExternalApi(
+                        i,
+                        method,
+                        path,
+                        body,
+                        bearer,
+                        options,
+                    );
+                } catch (e) {
+                    lastError = e;
+                    console.error(e);
+                    continue;
+                }
+            }
+            throw lastError;
+        }
 
-        return $fetch<T>(url, {
+        return await $fetch<T>(path, {
             baseURL: base,
             method: method,
             body: body,
@@ -140,7 +161,7 @@ export function useApi() {
                 }
             },
         });
-    };
+    }
 
     return {
         usePanelApi,

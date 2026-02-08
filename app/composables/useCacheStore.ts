@@ -7,7 +7,8 @@ export const useCacheStore = defineStore(
         const hiddenServers = ref<Set<string>>(new Set());
         const lastFetchServerListTs = ref(0);
         const isServerListLoaded = ref(false);
-        const mcVersionList = ref<string[]>([]);
+        const mcReleaseList = ref<string[]>([]);
+        const mcSnapshotList = ref<string[]>([]);
         const playerProfile = ref<PlayerProfile | undefined>(undefined);
 
         return {
@@ -15,7 +16,8 @@ export const useCacheStore = defineStore(
             hiddenServers,
             lastFetchServerListTs,
             isServerListLoaded,
-            mcVersionList,
+            mcReleaseList,
+            mcSnapshotList,
             playerProfile,
         };
     },
