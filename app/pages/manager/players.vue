@@ -211,6 +211,8 @@ async function changePermission(item: PlayerTabelItem) {
             :page-size="pageSize"
             :server-total="totalItems"
             :loading="isLoading"
+            :sibling-count="3"
+            show-edges
             @change="fetchData"
         >
             <template #expanded="{ row }">

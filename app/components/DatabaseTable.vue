@@ -8,6 +8,8 @@ const props = defineProps<{
     pageSize?: number;
     serverTotal?: number;
     loading?: boolean;
+    siblingCount?: number;
+    showEdges?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -94,7 +96,9 @@ watch(
                 v-model:page="currentPage"
                 :items-per-page="perPage"
                 :total="totalCount"
+                :sibling-count="props.siblingCount"
                 :disabled="props.loading"
+                :show-edges="props.showEdges"
                 class="flex items-center gap-1"
             />
 

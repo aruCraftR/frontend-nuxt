@@ -274,6 +274,7 @@ const fetchPlayHistory = async (page: number) => {
                                 :data="playHistoryData"
                                 :page-size="playHistoryPageSize"
                                 :server-total="totalPlayHistory"
+                                show-edges
                                 @change="fetchPlayHistory"
                             >
                                 <template #mcId-cell="{ row }">
